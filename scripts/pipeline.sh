@@ -320,6 +320,10 @@ step_merge() {
   local inputs=()
   for f in "${clips[@]}"; do inputs+=(-i "$f"); done
 
+  # Build the xfade chain. Each xfade needs BOTH inputs to still have frames at
+  # the offset; if a short clip runs out, ffmpeg silently truncates the output.
+  # So every input is first padded to its full slot length (clip + one crossfade),
+  # which guarantees frames exist where the offset lands.
   python3 - "$n" "$XFADE" "$WORK/clips" > "$WORK/merge-filter.txt" <<'PY'
 import sys, subprocess, json, os
 n, xf = int(sys.argv[1]), float(sys.argv[2])
@@ -332,19 +336,41 @@ for k in range(1, n + 1):
     out = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",p],
                          capture_output=True, text=True).stdout
     durs.append(float(json.loads(out)["format"]["duration"]))
-parts, cur, total = [], "[0:v]", 0.0
+
+parts = []
+# pad each source so it can always supply frames through its crossfade
+for k in range(n):
+    parts.append(f"[{k}:v]tpad=stop_mode=clone:stop_duration={xf + 0.5:.3f},setsar=1[p{k}]")
+
+cur, total = "[p0]", 0.0
 for k in range(1, n):
     total += durs[k-1] - xf
     nxt = f"[v{k}]" if k < n - 1 else "[vout]"
-    parts.append(f"{cur}[{k}:v]xfade=transition=fadeblack:duration={xf}:offset={total:.3f}{nxt}")
+    parts.append(f"{cur}[p{k}]xfade=transition=fadeblack:duration={xf}:offset={total:.3f}{nxt}")
     cur = f"[v{k}]"
 print(";".join(parts))
 PY
 
+  # exact merged length: sum of clips minus one crossfade per join
+  local total
+  total=$(python3 - "$n" "$XFADE" "$WORK/clips" <<'PY'
+import sys, subprocess, json, os
+n, xf = int(sys.argv[1]), float(sys.argv[2])
+folder = sys.argv[3]
+s = 0.0
+for k in range(1, n + 1):
+    p = os.path.join(folder, f"{k:02d}.mp4")
+    out = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",p],
+                         capture_output=True, text=True).stdout
+    s += float(json.loads(out)["format"]["duration"])
+print(f"{s - (n - 1) * xf:.3f}")
+PY
+)
+
   ffmpeg -y -hide_banner -loglevel error "${inputs[@]}" \
     -filter_complex_script "$WORK/merge-filter.txt" \
-    -map "[vout]" -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "$WORK/video.mp4"
-  echo "  ✓ $WORK/video.mp4"
+    -map "[vout]" -t "$total" -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "$WORK/video.mp4"
+  echo "  ✓ $WORK/video.mp4 (${total}s)"
 }
 
 step_audio() {
