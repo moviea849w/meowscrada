@@ -393,11 +393,10 @@ PY
       && subs=1 && echo "  + subtitles (Hinglish)"
   fi
   if [[ "$subs" -eq 1 ]]; then
-    # subtle dark plate behind the caption, lower third, bold sans
-    local fs=$(( W / 32 ))
-    local mr=$(( W / 16 ))
-    local bottom=$(( H / 10 ))
-    subvf="subtitles='${subfile}':force_style='FontName=Poppins,FontSize=${fs},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=3,Outline=2,Shadow=0,BackColour=&H99000000,MarginV=${bottom},Alignment=2'"
+    # keep captions below the title block; on 16:9 that's a fixed inset from the bottom
+    local fs=$(( W / 40 ))
+    local bottom=$(( H / 22 ))
+    subvf="subtitles='${subfile}':force_style='FontName=Poppins,FontSize=${fs},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=3,Outline=2,Shadow=0,BackColour=&HB4000000,MarginV=${bottom},Alignment=2'"
   fi
 
   if [[ -n "$track" && -f "$music" ]]; then

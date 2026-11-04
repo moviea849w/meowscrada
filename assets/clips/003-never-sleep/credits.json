@@ -68,5 +68,26 @@
     "author": "Boris Hamer",
     "license": "Pexels License",
     "page": "https://www.pexels.com/video/beograd-oluja-17686937/"
+  },
+  "rocking-chair": {
+    "source": "pexels",
+    "id": "6798794",
+    "author": "RDNE Stock project",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/a-crystal-on-top-of-an-open-book-6798794/"
+  },
+  "clock-face": {
+    "source": "pexels",
+    "id": "854314",
+    "author": "Pixabay",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/close-up-video-of-clock-hands-854314/"
+  },
+  "insomnia": {
+    "source": "pexels",
+    "id": "6944078",
+    "author": "cottonbro studio",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/a-young-man-lying-awake-in-bed-6944078/"
   }
 }

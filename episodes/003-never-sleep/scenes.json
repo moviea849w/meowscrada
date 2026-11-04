@@ -103,7 +103,7 @@
     "motion": "in",
     "say": "Din chaar pe pehli baar use cheezein dikhne lagi jo thi hi nahi.",
     "sub": "Din 4 pe pehli baar use cheezein dikhne lagi jo thi hi nahi.",
-    "footage": "brain",
+    "footage": "insomnia",
     "overlay": true
   },
   {
@@ -217,7 +217,7 @@
     "motion": "in",
     "say": "Wo kursi pe jhoolte jhoolte. Wazan kam ho gaya, khaana nahi ruka, yaadash gayi.",
     "sub": "Wo kursi pe jhoolte jhoolte. Wazan kam ho gaya, khaana nahi ruka, yaadash gayi.",
-    "footage": "alarm-clock",
+    "footage": "rocking-chair",
     "overlay": true
   },
   {
@@ -412,7 +412,7 @@
     "motion": "in",
     "say": "Isliye poori raat jaag ke ghar gaadi chalana sabse khatarnaak hissa hai.",
     "sub": "Isliye poori raat jaag ke ghar gaadi chalana sabse khatarnaak hissa hai.",
-    "footage": "eyes-open",
+    "footage": "night-drive",
     "overlay": true
   },
   {
@@ -434,7 +434,7 @@
     "motion": "in",
     "say": "Wo neend na aana unki marzi nahi thi. Wo khoon mein aata hai.",
     "sub": "Wo neend na aana unki marzi nahi thi. Wo khoon mein aata hai.",
-    "footage": "night-drive",
+    "footage": "insomnia",
     "overlay": true
   },
   {
@@ -465,7 +465,7 @@
     "motion": "in",
     "say": "Pachaas ke aas paas shuru hota hai. Pehle neend. Phir blood pressure aur temperature.",
     "sub": "Pachaas ke aas paas shuru hota hai. Pehle neend. Phir blood pressure aur temperature.",
-    "footage": "hospital",
+    "footage": "insomnia",
     "overlay": true
   },
   {
@@ -485,7 +485,7 @@
     "motion": "in",
     "say": "Pehle lakshan se maut tak, ausat mein atharah mahine.",
     "sub": "Pehle lakshan se maut tak, ausat mein 18 mahine.",
-    "footage": "brain",
+    "footage": "hospital",
     "overlay": true
   },
   {
@@ -507,7 +507,7 @@
     "motion": "in",
     "say": "Researchers unhein lagatar jaagta rakhe. Wo do se teen hafte tak jiye.",
     "sub": "Researchers unhein lagatar jaagta rakhe. Wo 2 se 3 hafte tak jiye.",
-    "footage": "hospital",
+    "footage": "rat-lab",
     "overlay": true
   },
   {
@@ -593,7 +593,7 @@
     "motion": "in",
     "say": "Din do se shuru, aapki aankhon se.",
     "sub": "Din 2 se shuru, aapki aankhon se.",
-    "footage": "city-night",
+    "footage": "eyes-open",
     "overlay": true
   },
   {

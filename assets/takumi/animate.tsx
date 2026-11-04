@@ -47,26 +47,26 @@ const adenosine = (t: number, c: Palette): ReactNode => {
   const flush = ease(step(t, 0.8, 1));
   const dots = [];
   for (let i = 0; i < n; i++) {
-    // pseudo-random but stable positions
-    const gx = (i * 97) % 560;
-    const gy = ((i * 53) % 340) + 40;
+    // pseudo-random but stable positions, kept inside the skull
+    const gx = (i * 97) % 430;
+    const gy = ((i * 53) % 380) + 80;
     const appear = clamp(build * 1.35 - (i / n) * 0.35);
     if (appear <= 0.01) continue;
     // on flush, each dot slides right and out of the head
     const dx = flush * (420 + (i % 5) * 40);
-    const dy = flush * (((i % 7) - 3) * 26);
+    const dy = flush * (((i % 7) - 3) * 22);
     dots.push(
       <div
         key={i}
         style={{
           display: "flex",
           position: "absolute",
-          left: 150 + gx + dx,
-          top: 120 + gy + dy,
-          width: 22,
-          height: 22,
+          left: 250 + gx + dx,
+          top: 90 + gy + dy,
+          width: 20,
+          height: 20,
           background: c.accent,
-          borderRadius: 22,
+          borderRadius: 20,
           opacity: appear * (1 - flush * 0.85),
         }}
       />,
@@ -75,14 +75,16 @@ const adenosine = (t: number, c: Palette): ReactNode => {
   return (
     <>
       {/* skull */}
-      <Ring x={110} y={60} size={700} stroke={c.ink} thick={10} />
-      <Bar x={300} y={760} w={320} h={10} fill={c.ink} />
+      <Ring x={190} y={30} size={500} stroke={c.ink} thick={10} />
+      <Bar x={350} y={520} w={240} h={10} fill={c.ink} />
       {dots}
-      {/* the flush arrow appears at the end */}
+      {/* the flush arrow, drawn as a shaft + head so it needs no font glyph */}
       {flush > 0.05 ? (
-        <div style={{ display: "flex", position: "absolute", left: 760, top: 430, fontSize: 90, fontWeight: 800, color: c.ink, opacity: flush }}>
-          →
-        </div>
+        <>
+          <Bar x={760} y={250} w={Math.round(130 * flush)} h={8} fill={c.ink} />
+          <Bar x={880} y={222} w={34} h={8} fill={c.ink} />
+          <Bar x={880} y={278} w={34} h={8} fill={c.ink} />
+        </>
       ) : null}
     </>
   );

@@ -506,7 +506,7 @@ const Wave = ({ s, c }: { s: Scene; c: Palette }) => {
                 <WaveBars x={0} y={0} w={PANEL - 140} h={240} samples={engine} c={c} />
               </div>
             </div>
-            <div style={{ display: "flex", fontSize: 44, fontWeight: 800, color: c.accent }}>↓ flipped upside down</div>
+            <div style={{ display: "flex", fontSize: 44, fontWeight: 800, color: c.accent }}>FLIPPED UPSIDE DOWN</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div style={{ display: "flex", fontSize: 30, fontWeight: 700, color: c.inkDim, letterSpacing: 3 }}>THE OPPOSITE</div>
               <div style={{ display: "flex", position: "relative", width: PANEL - 140, height: 250 }}>
@@ -689,7 +689,7 @@ const AnimPanel = ({
   const shown = text.slice(0, Math.round(text.length * typed));
 
   const drawBox = landscape
-    ? { left: 120, top: 90, width: 1680, height: 560 }
+    ? { left: 120, top: 70, width: 1680, height: 470 }
     : { left: 132, top: 230, width: 816, height: 800 };
 
   return (
@@ -731,14 +731,14 @@ const AnimPanel = ({
           display: "flex",
           position: "absolute",
           left: landscape ? 120 : 72,
-          top: landscape ? 700 : 1090,
+          top: landscape ? 590 : 1090,
           width: landscape ? 1680 : PANEL,
           flexDirection: "column",
-          gap: 22,
+          gap: 18,
         }}
       >
         <Kicker text={s.kicker} c={c} />
-        <div style={{ display: "flex", fontSize: landscape ? 76 : 78, fontWeight: 800, color: c.ink, lineHeight: 1.16, whiteSpace: "pre-line" }}>
+        <div style={{ display: "flex", fontSize: landscape ? 68 : 78, fontWeight: 800, color: c.ink, lineHeight: 1.12, whiteSpace: "pre-line" }}>
           {shown}
         </div>
         {s.sub && typed >= 1 ? <Sub text={s.sub} c={c} /> : null}

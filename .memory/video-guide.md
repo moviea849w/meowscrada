@@ -125,6 +125,12 @@ episode takes ~6–8 minutes of pure TTS. Everything else is minutes.
 
 ## Gotchas (new ones)
 
+- **Poppins has no arrow glyphs.** `→` and `↓` render as tofu boxes (□). Verified with
+  fontTools: `→`, `↓` MISSING; `“”` `—` `’` `%` OK. Draw arrows as bars, or use words.
+  Check any new symbol before using it:
+  ```bash
+  python3 -c "from fontTools.ttLib import TTFont; c=TTFont('assets/fonts/Poppins-ExtraBold.ttf').getBestCmap(); print('→' in [chr(k) for k in c])"
+  ```
 - **`python3 - <<'PY'` swallows piped stdin.** The heredoc becomes stdin, so
   `curl ... | python3 - <<'PY'` reads the script, not the JSON. Pass data as an
   argument instead (`python3 -c '...' "$body"`). This broke `stock-fetch.sh` first run.
