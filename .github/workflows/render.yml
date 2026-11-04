@@ -57,9 +57,10 @@ jobs:
 
       - name: System dependencies
         run: |
+          # nodejs/npm are preinstalled on the runner — installing them via apt is
+          # slow and can downgrade Node. Only ffmpeg and jq are actually needed.
           sudo apt-get update -qq
-          # cairo/pango are only needed to build node-canvas; skip if the cache has it
-          sudo apt-get install -y -qq ffmpeg jq python3 nodejs npm
+          sudo apt-get install -y -qq ffmpeg jq
           ffmpeg -version | head -1
           node -v
 
