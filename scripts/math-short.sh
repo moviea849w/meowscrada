@@ -103,7 +103,7 @@ done
 # countdown ring text + progress bar
 VF+="drawtext=fontfile='${FONT_EN}':text='%{eif\\:max(0\\,${THINK}-floor(t))\\:d}':fontfile='${FONT_EN}':fontcolor=0xff4444:fontsize=130:x=(w-tw)/2:y=1520:enable='lt(t,${THINK})',"
 VF+="drawtext=fontfile='${FONT_HI}':text='सही जवाब':fontcolor=0x00e676:fontsize=100:x=(w-tw)/2:y=1500:enable='gte(t,${THINK})',"
-VF+="drawtext=fontfile='${FONT_EN}':text='${ANSWER}':fontcolor=0x00e676:fontsize=150:x=(w-tw)/2:y=1600:enable='gte(t,${THINK})',"
+VF+="drawtext=fontfile='${FONT_EN}':text='${ANSWER}':fontcolor=0x00e676:fontsize=130:x=(w-tw)/2:y=1570:enable='gte(t,${THINK})',"
 VF+="drawbox=x=90:y=1700:w='900*min(t/${THINK},1)':h=18:color=0xffcc00@0.9:t=fill:enable='lt(t,${THINK})',"
 VF+="drawbox=x=90:y=1700:w=900:h=18:color=0x223354@0.8:t=fill:enable='gte(t,${THINK})',"
 VF+="drawbox=x=90:y=1700:w=900:h=18:color=0x00e676@0.9:t=fill:enable='gte(t,${THINK})',"
