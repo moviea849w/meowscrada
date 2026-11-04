@@ -54,6 +54,9 @@ EP_JSON="$EP_DIR/episode.json"
 OUT="$WORK/final.mp4"
 
 W=1920; H=1080; FPS=30; XFADE=0.8
+# PREVIEW=1 renders at 480p so iteration is fast: the expensive part of a preview
+# is DECODING full-size clips, not encoding, so clips must be small from the start.
+if [[ "${PREVIEW:-0}" == "1" ]]; then W=854; H=480; fi
 RENDERER="scene"
 VOICE_LANG="hi"
 VOICE=""
@@ -135,6 +138,20 @@ step_art() {
 
 step_tts() {
   echo "▶ tts"
+
+  # Piper's Hindi voice only reads Devanagari. Roman Hindi is phonemized as
+  # English letters and comes out as gibberish — catch it before burning minutes.
+  if [[ "$VOICE_LANG" == "hi"* ]]; then
+    local bad
+    bad=$(jq -r '.[] | select(.say != null and .say != "") | .say' "$SCENES" \
+          | grep -nP '[A-Za-z]{3,}' | head -3)
+    if [[ -n "$bad" ]]; then
+      echo "  ✗ Hindi narration must be Devanagari, found Latin text:"
+      echo "$bad" | sed 's/^/    /'
+      echo "    fix the \\"say\\" lines, or set \\"voice\\": \\"en\\" in episode.json"
+      return 1
+    fi
+  fi
   # Piper is single-threaded, so run several lines at once. Each scene writes its
   # own WAV, so there is nothing to lock. Cores come from the machine, capped at 4.
   local jobs=$(( $(nproc) ))
