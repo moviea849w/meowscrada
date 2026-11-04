@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# tmpfiles — upload a file to tmpfiles.org and print share links
+#
+# Usage:
+#   ./scripts/tmpfiles FILE [FILE...]
+#   ./scripts/tmpfiles --clipboard FILE     # copy direct link (needs xclip/wl-copy/pbcopy)
+#
+# Files expire after ~1 hour.
+
+set -euo pipefail
+
+CLIP=0
+if [[ "${1:-}" == "--clipboard" ]]; then CLIP=1; shift; fi
+
+if [[ $# -lt 1 ]]; then
+  echo "usage: $(basename "$0") [--clipboard] FILE [FILE...]" >&2
+  exit 2
+fi
+
+copy() {
+  if command -v wl-copy >/dev/null 2>&1; then wl-copy "$1"
+  elif command -v xclip >/dev/null 2>&1; then printf '%s' "$1" | xclip -selection clipboard
+  elif command -v pbcopy >/dev/null 2>&1; then printf '%s' "$1" | pbcopy
+  else return 1; fi
+}
+
+fail=0
+for f in "$@"; do
+  if [[ ! -f "$f" ]]; then echo "✗ not a file: $f" >&2; fail=1; continue; fi
+
+  echo "▶ uploading $(basename "$f") ($(du -h "$f" | cut -f1)) ..."
+  resp="$(curl -sS -F "file=@$f" https://tmpfiles.org/api/v1/upload || true)"
+  url="$(printf '%s' "$resp" | sed -n 's/.*"url":"\([^"]*\)".*/\1/p')"
+
+  if [[ -z "$url" ]]; then
+    echo "✗ upload failed: $resp" >&2
+    fail=1
+    continue
+  fi
+
+  dl="$(printf '%s' "$url" | sed 's#tmpfiles.org/#tmpfiles.org/dl/#')"
+  echo "  page:   $url"
+  echo "  direct: $dl"
+
+  if [[ "$CLIP" -eq 1 ]]; then
+    if copy "$dl"; then echo "  copied direct link to clipboard"; else echo "  (no clipboard tool found)"; fi
+  fi
+done
+
+exit "$fail"

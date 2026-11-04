@@ -1,19 +1,23 @@
 # Goal
 
-**Make videos for YouTube channel**
+**Make videos for YouTube channel — SHORT FORM**
+
+## Format
+- Short vertical videos: 9:16, 1080x1920, 15–60 seconds
+- Platforms: YouTube Shorts, TikTok, Instagram Reels
+- Style: hook in first 1–2s, fast cuts, captions on screen, trending audio optional
 
 ## Objectives
-- Plan, create, and publish YouTube videos
-- Build a consistent workflow for scripting, recording, editing, and uploading
-- Track progress via tickets and mark completed work in done.md
+- Produce short videos consistently
+- Build a repeatable pipeline: idea → hook script → visual → edit → caption → thumbnail → upload
+- Track progress via tickets; log completions in done.md
 
 ## Success criteria
-- [ ] Channel workflow set up (script → record → edit → thumbnail → upload)
-- [ ] First video published
-- [ ] Regular publishing cadence established
+- [ ] Short-video pipeline set up
+- [ ] First short published
+- [ ] Regular posting cadence (e.g. 1/day or 3/week)
 
 ## Notes
-- Channel name/niche: TBD
-- Video length: TBD
-- Schedule: TBD
-- Tools: ffmpeg ✅, Remotion skill, Obscura browser (0.2.6), Exa MCP
+- Niche: TBD
+- Tools: ffmpeg ✅, Obscura ✅, Remotion skill, Exa MCP
+- Vertical template: 1080x1920, ≤60s, burned-in captions

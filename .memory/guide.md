@@ -23,6 +23,14 @@ Guides and references for making YouTube videos.
 - **Python + moviepy** — programmatic video creation
 - **Node.js + remotion** — code-driven videos
 
+## Helper scripts
+- `scripts/make-short.sh "TEXT" 10` — render a vertical test short to `.temp/` and upload it
+  - `--no-upload` to render only
+- `scripts/tmpfiles FILE...` — upload any file to tmpfiles.org, prints page + direct link
+  - `--clipboard` also copies the direct link
+  - symlinked to `~/.local/bin/tmpfiles` (run from anywhere)
+  - links expire ~1 hour
+
 ## ffmpeg cheatsheet
 ```bash
 # Trim a video

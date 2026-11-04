@@ -1,0 +1,12 @@
+# temp files
+.temp/
+*.tmp
+*.temp
+obscura-x86_64-linux.tar.gz
+obscura
+obscura-worker
+node_modules/
+out/
+dist/
+*.mp4
+*.mov
