@@ -1,0 +1,103 @@
+name: Render episode
+
+# Render an episode on a 4-core runner and post the finished video to Telegram.
+#
+# Trigger it from the Actions tab (Run workflow) and type the episode slug,
+# or from the CLI:
+#   gh workflow run render.yml -f episode=003-never-sleep
+#
+# Required secrets (Settings → Secrets and variables → Actions):
+#   TELEGRAM_BOT_TOKEN   bot token from @BotFather
+#   TELEGRAM_CHAT_ID     chat or group id (a group id starts with -)
+#   PEXELS_API_KEY       only needed when new stock footage must be fetched
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode slug (folder under episodes/)"
+        required: true
+        default: "003-never-sleep"
+        type: string
+      from:
+        description: "Start step"
+        required: false
+        default: "stock"
+        type: choice
+        options: [stock, tts, still, clip, merge, audio, upload]
+      to:
+        description: "Stop step"
+        required: false
+        default: "upload"
+        type: choice
+        options: [stock, tts, still, clip, merge, audio, upload]
+      send:
+        description: "Send to Telegram when done"
+        required: false
+        default: true
+        type: boolean
+
+  # optional: render automatically when an episode's scenes change
+  # push:
+  #   paths:
+  #     - 'episodes/**/scenes.json'
+
+concurrency:
+  group: render-${{ github.event.inputs.episode || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: System dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg jq python3 nodejs npm libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+          ffmpeg -version | head -1
+          node -v
+
+      - name: Node dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+
+      - name: Piper (text to speech)
+        run: |
+          if [ ! -x scripts/tts ] || ! scripts/tts --help >/dev/null 2>&1; then
+            pip install --quiet piper-tts || pip install --quiet piper-tts-legacy || true
+          fi
+          command -v piper || echo "piper not on PATH — scripts/tts will report if missing"
+
+      - name: Cache voice models
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/piper-voices
+          key: piper-voices-v1
+
+      - name: Fetch voice models
+        run: ./scripts/voice-fetch.sh
+
+      - name: Render
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: |
+          chmod +x scripts/*.sh scripts/tts
+          ARGS="--from ${{ github.event.inputs.from || 'stock' }} --to ${{ github.event.inputs.to || 'upload' }}"
+          if [ "${{ github.event.inputs.send }}" = "false" ]; then ARGS="$ARGS --no-send"; fi
+          ./scripts/ci-render.sh "${{ github.event.inputs.episode || '003-never-sleep' }}" $ARGS
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-${{ github.event.inputs.episode || '003-never-sleep' }}
+          path: .temp/*/final.mp4
+          if-no-files-found: warn
+          retention-days: 7
