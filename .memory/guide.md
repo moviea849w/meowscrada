@@ -27,6 +27,7 @@ Guides and references for making YouTube videos.
 - [shorts-guide.md](./shorts-guide.md) — full guide: making + sharing short videos (scripts, ffmpeg recipes, captions, thumbnails)
 - [voiceover-guide.md](./voiceover-guide.md) — voiceover rules: Hindi audio, no technical words, on-screen text, tone
 - [obscura-guide.md](./obscura-guide.md) — render webpage backgrounds as 1080x1920 PNGs with Obscura
+- [setup-guide.md](./setup-guide.md) — fresh machine setup: ffmpeg, fonts, Piper TTS, Obscura, shortcuts, verification
 
 ## Helper scripts
 - `scripts/make-short.sh "TEXT" 10` — render a vertical test short to `.temp/` and upload it

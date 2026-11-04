@@ -33,8 +33,11 @@ THINK=9            # seconds of thinking time before reveal
 TAIL=3             # seconds after reveal
 TOTAL=$((THINK + TAIL))
 
-FONT="/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf"
-[[ -f "$FONT" ]] || FONT="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+# Devanagari font for Hindi text; DejaVu for Latin letters/symbols (A/B/C/D, check mark)
+FONT_HI="/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf"
+FONT_EN="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+[[ -f "$FONT_HI" ]] || FONT_HI="$FONT_EN"
+FONT="$FONT_HI"
 
 # wrong options near the answer
 WRONG1=$((ANSWER + 3))
@@ -62,29 +65,59 @@ echo "▶ Voiceover (Hindi) ..."
 # ---------- video ----------
 echo "▶ Rendering ${TOTAL}s math short: ${A} + ${B} = ?"
 
+# Option box colours: correct turns green, others dim after reveal
+pos_of() { # $1 = value -> prints A/B/C/D
+  [[ "$1" == "$ANSWER" ]] && echo "correct" || echo "wrong"
+}
+CORRECT_POS=""
+for i in 1 2 3 4; do
+  v=$(eval echo "\$O$i")
+  [[ "$v" == "$ANSWER" ]] && CORRECT_POS=$i
+done
+
+# option box y positions
+Y=(700 900 1100 1300)
+VF=""
+# header + equation
+VF+="drawbox=x=0:y=0:w=1080:h=14:color=0xffcc00:t=fill,"
+VF+="drawtext=fontfile='${FONT_HI}':text='गणित क्विज़':fontcolor=0xffcc00:fontsize=66:x=(w-tw)/2:y=140,"
+VF+="drawtext=fontfile='${FONT_EN}':text='${A} + ${B} = ?':fontcolor=white:fontsize=180:x=(w-tw)/2:y=400,"
+
+for i in 1 2 3 4; do
+  v=$(eval echo "\$O$i")
+  y=${Y[$((i-1))]}
+  label=$(printf '%s' "ABCD" | cut -c$i)
+  # normal state: latin letter + number (DejaVu has digits/letters)
+  VF+="drawbox=x=90:y=${y}:w=900:h=150:color=0x223354@0.92:t=fill:enable='lt(t,${THINK})',"
+  VF+="drawtext=fontfile='${FONT_EN}':text='${label})  ${v}':fontcolor=white:fontsize=92:x=160:y=$((y+34)):enable='lt(t,${THINK})',"
+  # reveal state
+  if [[ "$i" == "$CORRECT_POS" ]]; then
+    VF+="drawbox=x=90:y=${y}:w=900:h=150:color=0x00a152@0.95:t=fill:enable='gte(t,${THINK})',"
+    VF+="drawtext=fontfile='${FONT_EN}':text='${label})  ${v}   OK':fontcolor=white:fontsize=92:x=150:y=$((y+34)):enable='gte(t,${THINK})',"
+  else
+    VF+="drawbox=x=90:y=${y}:w=900:h=150:color=0x1b2333@0.55:t=fill:enable='gte(t,${THINK})',"
+    VF+="drawtext=fontfile='${FONT_EN}':text='${label})  ${v}':fontcolor=0x8a94a6:fontsize=92:x=160:y=$((y+34)):enable='gte(t,${THINK})',"
+  fi
+done
+
+# countdown ring text + progress bar
+VF+="drawtext=fontfile='${FONT_EN}':text='%{eif\\:max(0\\,${THINK}-floor(t))\\:d}':fontfile='${FONT_EN}':fontcolor=0xff4444:fontsize=130:x=(w-tw)/2:y=1520:enable='lt(t,${THINK})',"
+VF+="drawtext=fontfile='${FONT_HI}':text='सही जवाब':fontcolor=0x00e676:fontsize=100:x=(w-tw)/2:y=1500:enable='gte(t,${THINK})',"
+VF+="drawtext=fontfile='${FONT_EN}':text='${ANSWER}':fontcolor=0x00e676:fontsize=150:x=(w-tw)/2:y=1600:enable='gte(t,${THINK})',"
+VF+="drawbox=x=90:y=1700:w='900*min(t/${THINK},1)':h=18:color=0xffcc00@0.9:t=fill:enable='lt(t,${THINK})',"
+VF+="drawbox=x=90:y=1700:w=900:h=18:color=0x223354@0.8:t=fill:enable='gte(t,${THINK})',"
+VF+="drawbox=x=90:y=1700:w=900:h=18:color=0x00e676@0.9:t=fill:enable='gte(t,${THINK})',"
+VF+="drawtext=fontfile='${FONT}':text='@meowscrada':fontfile='${FONT_EN}':fontcolor=0x5b6478:fontsize=44:x=(w-tw)/2:y=1790"
+VF+="[v]"
+
 ffmpeg -y -hide_banner -loglevel error \
   -f lavfi -i "color=c=0x101828:s=1080x1920:d=${TOTAL}:r=30" \
   -i "$Q_WAV" \
   -i "$A_WAV" \
-  -filter_complex "\
-[0:v]drawtext=fontfile='${FONT}':text='गणित क्विज़':fontcolor=0xffcc00:fontsize=64:x=(w-tw)/2:y=140,\
-drawtext=fontfile='${FONT}':text='${A} + ${B} = ?':fontcolor=white:fontsize=170:x=(w-tw)/2:y=430,\
-drawbox=x=90:y=700:w=900:h=150:color=0x223354@0.9:t=fill,\
-drawtext=fontfile='${FONT}':text='A)  ${O1}':fontcolor=white:fontsize=90:x=170:y=740,\
-drawbox=x=90:y=900:w=900:h=150:color=0x223354@0.9:t=fill,\
-drawtext=fontfile='${FONT}':text='B)  ${O2}':fontcolor=white:fontsize=90:x=170:y=940,\
-drawbox=x=90:y=1100:w=900:h=150:color=0x223354@0.9:t=fill,\
-drawtext=fontfile='${FONT}':text='C)  ${O3}':fontcolor=white:fontsize=90:x=170:y=1140,\
-drawbox=x=90:y=1300:w=900:h=150:color=0x223354@0.9:t=fill,\
-drawtext=fontfile='${FONT}':text='D)  ${O4}':fontcolor=white:fontsize=90:x=170:y=1340,\
-drawtext=fontfile='${FONT}':text='समय: %{eif\\:max(0\\,${THINK}-floor(t))\\:d}':fontcolor=0xff4444:fontsize=100:x=(w-tw)/2:y=1560:enable='lt(t,${THINK})',\
-drawtext=fontfile='${FONT}':text='सही जवाब: ${ANSWER}':fontcolor=0x00e676:fontsize=120:x=(w-tw)/2:y=1550:enable='gte(t,${THINK})'[v];\
-[1:a]adelay=300|300[q];\
-[2:a]adelay=$(( (THINK+1)*1000 ))|$(( (THINK+1)*1000 ))[a];\
-[q][a]amix=inputs=2:duration=longest:normalize=0,apad[aout]" \
+  -filter_complex "[0:v]${VF};[1:a]adelay=300|300[q];[2:a]adelay=$(( (THINK+1)*1000 ))|$(( (THINK+1)*1000 ))[a];[q][a]amix=inputs=2:duration=longest:normalize=0,apad[aout]" \
   -map "[v]" -map "[aout]" \
   -t "$TOTAL" \
-  -c:v libx264 -pix_fmt yuv420p -preset veryfast \
+  -c:v libx264 -pix_fmt yuv420p -preset veryfast -crf 20 \
   -c:a aac -b:a 128k -movflags +faststart \
   "$OUT"
 

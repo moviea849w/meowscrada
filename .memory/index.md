@@ -1,15 +1,22 @@
 # Memory Index
 
-- [goal.md](./goal.md) — Main goal: make videos for YouTube channel
-- [done.md](./done.md) — Completed work log
-- [tickets/](./tickets/) — Task tickets
-- [guide.md](./guide.md) — Reference guides
-- [shorts-guide.md](./shorts-guide.md) — Short-video pipeline guide
-- [voiceover-guide.md](./voiceover-guide.md) — Voiceover rules (Hindi, no technical words)
-- [obscura-guide.md](./obscura-guide.md) — Obscura PNG background renderer
+Start here. This folder is the shared brain of the project — goals, tasks, done work, and guides. Read in this order.
 
-## How to use
-1. Check `goal.md` first for the big picture.
-2. Look in `tickets/` for current tasks.
-3. Move finished items to `done.md`.
-4. Add new guides/reference info to `guide.md`.
+## Start here
+1. [goal.md](./goal.md) — what we're building (short videos for the channel)
+2. [tickets/](./tickets/) — what's open right now
+3. [guide.md](./guide.md) — index of all guides
+4. [done.md](./done.md) — what's already finished
+
+## Guides
+- [shorts-guide.md](./shorts-guide.md) — full short-video pipeline (scripts, ffmpeg recipes, captions, thumbnails)
+- [voiceover-guide.md](./voiceover-guide.md) — voiceover rules: Hindi audio, no technical words, numbers in English
+- [obscura-guide.md](./obscura-guide.md) — render webpage backgrounds as 1080x1920 PNGs
+- [setup-guide.md](./setup-guide.md) — fresh machine setup (all tools + how to verify)
+
+## Conventions
+- Work happens through **tickets** in `tickets/` (one file per task, e.g. `001-first-short.md`)
+- When something is finished, tick it in the ticket and log it in `done.md`
+- New reference material goes into a guide and gets linked in `guide.md`
+- Rendered videos / temp files live in `.temp/` and are **not** committed
+- `.memory/` is always committed — this is how anyone can pick up the project
