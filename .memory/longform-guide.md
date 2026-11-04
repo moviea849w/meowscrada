@@ -52,6 +52,43 @@ SAY: एक राजा के पास सब कुछ था...
 - Every image gets slow **Ken Burns** motion (zoom 1.0 → 1.12, or pan). Static frames look dead.
 - Darken edges with a vignette so white text stays readable.
 
+## Scene templates
+
+Layouts live in `assets/takumi/scene-templates.tsx` as pure functions `(scene, art, palette) → JSX`.
+`assets/takumi/render-scene.tsx` just loads data and calls one, so a single edit fixes every video.
+
+| Template | Use for |
+|---|---|
+| `title` | cold open, outro |
+| `lower-third` | the workhorse — kicker + headline, bottom-left |
+| `quote` | the turn / a big statement, centered |
+| `stat` | one huge number (`"stat": "1381"`) |
+| `split` | art right, solid panel left holding text |
+
+**Vary templates between episodes.** In episode 1 the rotation is `title, stat, quote, lower-third, split, lower-third, quote, quote, split, …` — no two adjacent scenes share a layout.
+
+## Hand-drawn annotations (Rough.js)
+
+`assets/takumi/render-doodles.mjs` draws sketchy marks to a **transparent PNG** using the
+`canvas` package — no headless browser. They suit history content because the source art
+(manuscripts, woodcuts) is itself hand-drawn, so annotation reads as a person explaining.
+
+```json
+"doodles": [
+  { "type": "circle", "x": 300, "y": 760, "w": 230, "h": 190 },
+  { "type": "arrow", "from": [720, 980], "to": [420, 840] }
+]
+```
+
+Mark types: `circle`, `arrow`, `underline`, `box`, `bracket`, `cross`, `hatch`, `text`.
+
+Rules:
+- **Sparse.** 4 of 20 scenes in episode 1. Annotating every frame looks like decoration.
+- Composite happens **before** Ken Burns, so the marks move with the art.
+- Coordinates are in the 1920x1080 still, not the video frame.
+
+Rough.js v4 gotcha: there is no `rc.seed()` method. Randomness is a **per-shape `seed` option**.
+
 ## Rendering
 `scripts/longform.sh <slug>` builds each scene as a short video clip (zoompan + text overlay), then concatenates with crossfades and lays the narration underneath.
 
@@ -60,5 +97,11 @@ Why clip-per-scene: it keeps memory flat for an 8-minute video, lets you re-rend
 ## Gotchas
 - `zoompan` needs `d=<frames>` and an `s=` output size; it silently crops if you forget `scale` first.
 - Long xfade chains must be chained pairwise — a single filter with 80 inputs will blow up.
+- **Never use `xfade=transition=fade` between text-heavy frames** — two headlines overlap and
+  both stay readable. Use `fadeblack` so only one headline is legible at a time.
+- Mix narration with `alimiter` at the end. `amix` with `normalize=0` clips at 0.0 dB.
 - Drawtext with a Devanagari font breaks on Latin glyphs — use Poppins for on-screen text (English only).
 - Piper is fast but flat; keep sentences short so it doesn't drag.
+- The renderer bundle sits at `.temp/<slug>/`, two levels deep — resolve the repo root by
+  **walking up until `package.json` + `assets/fonts` both exist**, not by counting `..`.
+- `art-fetch.sh` skips files that already exist. Set `FORCE_REFETCH=1` to re-download.

@@ -66,6 +66,8 @@ npx esbuild "$ROOT/assets/takumi/render-scene.tsx" \
   --outfile="$WORK/render-scene.mjs" --loader:.tsx=tsx >/dev/null 2>&1
 
 # ---------- 3+4. stills, narration, motion clips ----------
+# Resumable: scenes whose clip already exists are skipped, and their duration is
+# read back from the clip so a resumed run keeps the same timeline.
 DURS=()
 i=0
 while [[ $i -lt $N ]]; do
@@ -76,6 +78,14 @@ while [[ $i -lt $N ]]; do
   say=$(jq -r '.say // empty' <<<"$s")
   motion=$(jq -r '.motion // "in"' <<<"$s")
   scene_audio="$WORK/audio/$idx.wav"
+
+  if [[ -s "$WORK/clips/$idx.mp4" ]]; then
+    dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/clips/$idx.mp4")
+    DURS+=("$dur")
+    printf '  · scene %s  cached %.1fs\n' "$idx" "$dur"
+    i=$((i + 1))
+    continue
+  fi
 
   # narration
   if [[ -n "$say" ]]; then
@@ -174,6 +184,7 @@ ffmpeg -y -hide_banner -loglevel error "${INPUTS[@]}" \
 
 # ---------- 6. narration timeline ----------
 echo "▶ Mixing narration"
+# $MUSIC_TRACK selects the output label: "aout" (narration only) or "afinal" (+ music)
 python3 - "$N" "$XFADE" "$WORK" "${DURS[@]}" > "$WORK/audio-filter.txt" <<'PY'
 import sys
 n, xf, work = int(sys.argv[1]), float(sys.argv[2]), sys.argv[3]
@@ -189,8 +200,9 @@ for k in range(n):
     ms = int(round(starts[k] * 1000))
     parts.append(f"[{k + 1}:a]adelay={ms}|{ms}[a{k}]")
 mix = "".join(f"[a{k}]" for k in range(n))
+# output label "anarr" — the music stage (if any) consumes it
 parts.append(f"{mix}amix=inputs={n}:duration=longest:normalize=0,"
-             f"alimiter=limit=0.89:level=false,aresample=48000[aout]")
+             f"alimiter=limit=0.89:level=false,aresample=48000[anarr]")
 print(";".join(parts))
 PY
 
@@ -199,11 +211,48 @@ for ((k = 1; k <= N; k++)); do
   AUDIO_IN+=(-i "$WORK/audio/$(printf '%02d' "$k").wav")
 done
 
-ffmpeg -y -hide_banner -loglevel error \
-  -i "$WORK/video.mp4" "${AUDIO_IN[@]}" \
-  -filter_complex_script "$WORK/audio-filter.txt" \
-  -map 0:v -map "[aout]" -c:v copy -c:a aac -b:a 160k -movflags +faststart \
-  -shortest "$OUT"
+# ---------- background music (optional, per-episode) ----------
+# Episode settings live in episode.json next to scenes.json:
+#   { "music": { "track": "medieval-ambient", "gain": -26 } }
+# Omit the file (or the music key) for a clean narration-only mix.
+EP_JSON="$EP_DIR/episode.json"
+MUSIC_TRACK=""
+MUSIC_GAIN="-26"
+if [[ -f "$EP_JSON" ]]; then
+  MUSIC_TRACK=$(jq -r '.music.track // empty' "$EP_JSON")
+  MUSIC_GAIN=$(jq -r '.music.gain // -26' "$EP_JSON")
+fi
+MUSIC_FILE="$ROOT/assets/music/${MUSIC_TRACK}.mp3"
+
+if [[ -n "$MUSIC_TRACK" && -f "$MUSIC_FILE" ]]; then
+  echo "▶ Adding music: $MUSIC_TRACK (${MUSIC_GAIN} dB)"
+
+  # narration mix + looped music under it, gently faded in
+  python3 - "$WORK" "$N" "$MUSIC_GAIN" > "$WORK/music-filter.txt" <<'PY'
+import sys
+work, n, gain = sys.argv[1], int(sys.argv[2]), float(sys.argv[3])
+# narration graph (inputs 1..n) + music as input n+1
+parts = [open(f"{work}/audio-filter.txt").read().strip().rstrip(";")]
+parts.append(f"[{n + 1}:a]volume={gain}dB,afade=t=in:st=0:d=2[mfade]")
+parts.append("[anarr][mfade]amix=inputs=2:duration=first:normalize=0,"
+             "alimiter=limit=0.89:level=false,aresample=48000[afinal]")
+print(";".join(parts))
+PY
+
+  DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/video.mp4")
+  ffmpeg -y -hide_banner -loglevel error \
+    -i "$WORK/video.mp4" "${AUDIO_IN[@]}" -stream_loop -1 -i "$MUSIC_FILE" \
+    -filter_complex_script "$WORK/music-filter.txt" \
+    -map 0:v -map "[afinal]" -c:v copy -c:a aac -b:a 160k -movflags +faststart \
+    -t "$DUR" "$OUT"
+else
+  [[ -n "$MUSIC_TRACK" ]] && echo "! music '$MUSIC_TRACK' not found in assets/music — narration only"
+  ffmpeg -y -hide_banner -loglevel error \
+    -i "$WORK/video.mp4" "${AUDIO_IN[@]}" \
+    -filter_complex_script "$WORK/audio-filter.txt" \
+    -map 0:v -map "[anarr]" -c:v copy -c:a aac -b:a 160k -movflags +faststart \
+    -shortest "$OUT"
+fi
 
 echo "✓ $(du -h "$OUT" | cut -f1)  $OUT"
 ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$OUT" | xargs printf '  duration: %ss\n'

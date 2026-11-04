@@ -309,12 +309,12 @@ const Split = ({ s, art, c }: { s: Scene; art: string | null; c: Palette }) => (
         flexDirection: "column",
         justifyContent: "center",
         gap: 22,
-        paddingLeft: 120,
-        paddingRight: 60,
+        paddingLeft: 110,
+        paddingRight: 20,
       }}
     >
       <Kicker text={s.kicker} c={c} />
-      <div style={{ display: "flex", fontSize: s.titleSize || 76, fontWeight: 800, color: c.text, lineHeight: 1.12 }}>
+      <div style={{ display: "flex", fontSize: s.titleSize || 68, fontWeight: 800, color: c.text, lineHeight: 1.14 }}>
         {s.title}
       </div>
       {s.sub ? (
