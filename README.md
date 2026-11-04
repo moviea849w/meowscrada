@@ -1,19 +1,20 @@
 # meowscrada
 
-Short-form video studio for a YouTube channel: Hindi math quizzes + AI cat shorts.
+Curiosity-based educational explainer videos for YouTube: long-form (16:9, 5–8 min) plus shorts cut from them.
+Hindi voiceover, English-only on-screen text, public-domain artwork.
 
 **New here? Read [`.memory/index.md`](./.memory/index.md) first.** It's the entry point to everything.
 
 ## Quick start
 ```bash
-# 1. Render + upload a Hindi math quiz short
-./scripts/math-short.sh 12 15
+# 1. Build an episode: art → Takumi scene stills → Ken Burns → merged video + Hindi narration
+./scripts/longform.sh episodes/001-medieval-king
 
-# 2. Voiceover only (Hindi, numbers in English)
+# 2. Pilot the first 3 scenes only (fast look check)
+./scripts/longform.sh episodes/001-medieval-king --pilot=3 --no-upload
+
+# 3. Voiceover only (Hindi, numbers in English)
 ./scripts/tts -l hi "सवाल: 12 जोड़ 15 कितना होता है?"
-
-# 3. Render a webpage as a 1080x1920 background PNG
-./scripts/bg-render.sh https://example.com --dark
 
 # 4. Upload any file for sharing (expires ~1h)
 tmpfiles out.mp4
@@ -23,25 +24,32 @@ tmpfiles out.mp4
 | File | What it is |
 |---|---|
 | `.memory/index.md` | Start here — index of everything |
-| `.memory/goal.md` | The goal: short videos for the channel |
+| `.memory/goal.md` | The goal: curiosity explainers, long + short |
 | `.memory/done.md` | Completed work log |
 | `.memory/tickets/` | Open tasks |
 | `.memory/guide.md` | Reference guides index |
-| `.memory/shorts-guide.md` | Full short-video pipeline |
+| `.memory/longform-guide.md` | **Long-form pipeline** — episode shape, script format, rendering |
+| `.memory/assets-guide.md` | **Asset library** — art/music/SFX fetch, licenses, credits |
 | `.memory/voiceover-guide.md` | Voiceover rules (Hindi, numbers in English) |
-| `.memory/obscura-guide.md` | Webpage → PNG backgrounds |
 | `.memory/takumi-guide.md` | Takumi card rendering |
+| `.memory/shorts-guide.md` | Short-video pipeline |
+| `.memory/obscura-guide.md` | Webpage → PNG backgrounds |
 | `.memory/kino-guide.md` | Kino JSON → MP4 (experimental, not main pipeline) |
 
 ## Scripts
 | Script | Purpose |
 |---|---|
-| `scripts/math-short.sh A B` | **Main pipeline** — Hindi math quiz short, Takumi cards + ffmpeg animation |
-| `scripts/kino-math.sh A B` | Experimental: same quiz as a Kino JSON composition (plainer look) |
-| `scripts/make-short.sh "TEXT" N` | Simple text short |
+| `scripts/longform.sh DIR` | **Main pipeline** — build a long-form episode from `scenes.json` |
+| `scripts/art-fetch.sh JSON DIR` | Fetch public-domain artwork (Wikimedia/Wikipedia APIs) |
+| `scripts/audio-fetch.sh music\|sfx JSON DIR` | Build the CC0/CC-BY music and SFX library |
+| `scripts/math-short.sh A B` | Vertical quiz short (Takumi cards + ffmpeg) |
+| `scripts/kino-math.sh A B` | Experimental: quiz as a Kino JSON composition |
 | `scripts/tts [-l hi] "text"` | Local TTS (Piper) → WAV |
 | `scripts/bg-render.sh URL` | Obscura screenshot → 1080x1920 PNG |
 | `scripts/tmpfiles FILE...` | Upload to tmpfiles.org |
+
+## Assets
+`assets/` is committed to git — artwork, music, SFX, backgrounds and fonts. Every folder has a `credits.json`; paste it into video descriptions. Only CC0 / CC-BY / CC-BY-SA / public domain is allowed.
 
 ## Requirements
 - ffmpeg, Python 3 + `piper-tts`, Noto Devanagari fonts, Obscura binary (see guides)

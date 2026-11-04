@@ -99,7 +99,21 @@ while [[ $i -lt $N ]]; do
      stat: (.stat // null), titleSize: (.titleSize // null)}
   ' <<<"$s" > "$spec"
 
-  node "$WORK/render-scene.mjs" --spec "$spec" --out "$WORK/stills/$idx.png" >/dev/null
+  node "$WORK/render-scene.mjs" --spec "$spec" --out "$WORK/stills/$idx.raw.png" >/dev/null
+
+  # optional hand-drawn annotations (Rough.js) composited over the still
+  doodles=$(jq -c '.doodles // empty' <<<"$s")
+  if [[ -n "$doodles" ]]; then
+    jq -n --argjson marks "$doodles" --argjson seed "${i}" \
+      '{width:1920, height:1080, color:"#d8a54a", seed:$seed, marks:$marks}' > "$WORK/doodles-$idx.json"
+    node "$ROOT/assets/takumi/render-doodles.mjs" --spec "$WORK/doodles-$idx.json" --out "$WORK/stills/$idx.png" >/dev/null 2>&1 \
+      || { echo "  ! doodles failed for scene $idx"; cp "$WORK/stills/$idx.raw.png" "$WORK/stills/$idx.png"; }
+    ffmpeg -y -hide_banner -loglevel error -i "$WORK/stills/$idx.raw.png" -i "$WORK/stills/$idx.png" \
+      -filter_complex "[0:v][1:v]overlay=0:0" -frames:v 1 "$WORK/stills/$idx.raw.png.tmp.png"
+    mv "$WORK/stills/$idx.raw.png.tmp.png" "$WORK/stills/$idx.png"
+  else
+    mv "$WORK/stills/$idx.raw.png" "$WORK/stills/$idx.png"
+  fi
 
   # Ken Burns motion from the still
   frames=$(python3 -c "print(int(round($dur*$FPS)))")
@@ -123,6 +137,9 @@ while [[ $i -lt $N ]]; do
 done
 
 # ---------- 5. crossfade merge ----------
+# NOTE: a plain fade between two text-heavy frames reads as two overlapping
+# headlines. `fadeblack` passes through black instead, so only one headline is
+# ever legible at a time.
 echo "▶ Merging $N clips"
 INPUTS=()
 for ((k = 1; k <= N; k++)); do
@@ -130,26 +147,23 @@ for ((k = 1; k <= N; k++)); do
 done
 
 python3 - "$N" "$XFADE" "$WORK/clips" > "$WORK/merge-filter.txt" <<'PY'
-import sys
+import sys, subprocess, json, os
 n, xf = int(sys.argv[1]), float(sys.argv[2])
+folder = sys.argv[3]
 if n == 1:
     print("[0:v]copy[vout]")
     sys.exit()
-# pairwise xfade chain; offset accumulates minus overlaps
-parts, cur = [], "[0:v]"
 durs = []
-import subprocess, json, os
-folder = sys.argv[3]
 for k in range(1, n + 1):
     p = os.path.join(folder, f"{k:02d}.mp4")
     out = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",p],
                          capture_output=True, text=True).stdout
     durs.append(float(json.loads(out)["format"]["duration"]))
-total = 0.0
+parts, cur, total = [], "[0:v]", 0.0
 for k in range(1, n):
     total += durs[k-1] - xf
     nxt = f"[v{k}]" if k < n - 1 else "[vout]"
-    parts.append(f"{cur}[{k}:v]xfade=transition=fade:duration={xf}:offset={total:.3f}{nxt}")
+    parts.append(f"{cur}[{k}:v]xfade=transition=fadeblack:duration={xf}:offset={total:.3f}{nxt}")
     cur = f"[v{k}]"
 print(";".join(parts))
 PY
@@ -170,11 +184,13 @@ for k in range(n):
     starts.append(t)
     t += durs[k] - xf
 parts = []
+# input 0 is the merged video, so the WAVs start at 1
 for k in range(n):
     ms = int(round(starts[k] * 1000))
-    parts.append(f"[{k}:a]adelay={ms}|{ms}[a{k}]")
+    parts.append(f"[{k + 1}:a]adelay={ms}|{ms}[a{k}]")
 mix = "".join(f"[a{k}]" for k in range(n))
-parts.append(f"{mix}amix=inputs={n}:duration=longest:normalize=0[aout]")
+parts.append(f"{mix}amix=inputs={n}:duration=longest:normalize=0,"
+             f"alimiter=limit=0.89:level=false,aresample=48000[aout]")
 print(";".join(parts))
 PY
 

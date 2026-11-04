@@ -203,7 +203,7 @@ const LowerThird = ({ s, art, c }: { s: Scene; art: string | null; c: Palette })
 const Quote = ({ s, art, c }: { s: Scene; art: string | null; c: Palette }) => (
   <Frame>
     <Art uri={art} focus={s.focus} />
-    <Scrim amount={0.66} gradient="radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 20%, rgba(0,0,0,0.5) 100%)" />
+    <Scrim amount={s.scrim ?? 0.45} gradient="radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 25%, rgba(0,0,0,0.45) 100%)" />
     <div
       style={{
         display: "flex",
@@ -242,7 +242,7 @@ const Quote = ({ s, art, c }: { s: Scene; art: string | null; c: Palette }) => (
 const Stat = ({ s, art, c }: { s: Scene; art: string | null; c: Palette }) => (
   <Frame>
     <Art uri={art} focus={s.focus} />
-    <Scrim amount={0.74} gradient="linear-gradient(to bottom, rgba(8,7,6,0.5), rgba(8,7,6,0.9))" />
+    <Scrim amount={s.scrim ?? 0.55} gradient="linear-gradient(to bottom, rgba(8,7,6,0.25), rgba(8,7,6,0.8))" />
     <div
       style={{
         display: "flex",

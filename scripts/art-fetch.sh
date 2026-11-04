@@ -76,9 +76,18 @@ COUNT=$(jq 'length' "$ART_JSON")
 echo "▶ $COUNT entries → $OUTDIR"
 [[ -f "$OUTDIR/credits.json" ]] || echo '{}' > "$OUTDIR/credits.json"
 
+# --force re-downloads everything; default reuses existing files
+FORCE=0
+[[ "${FORCE_REFETCH:-0}" == "1" ]] && FORCE=1
+
 for i in $(seq 0 $((COUNT - 1))); do
   entry=$(jq -c ".[$i]" "$ART_JSON")
   key=$(jq -r '.key' <<<"$entry")
+
+  if [[ "$FORCE" -eq 0 && -s "$OUTDIR/$key.jpg" ]]; then
+    echo "  · $key — already present"
+    continue
+  fi
 
   title=$(resolve_title "$entry")
   if [[ -z "$title" || "$title" == "null" ]]; then
@@ -101,10 +110,15 @@ for i in $(seq 0 $((COUNT - 1))); do
   raw="$OUTDIR/.raw-$key"
   curl -sL -A "$UA" -o "$raw" "$url"
 
+  # keep an existing good file if this download is broken
   if ! ffmpeg -y -hide_banner -loglevel error -i "$raw" \
       -vf "scale='min(2400,iw)':-2" -q:v 3 -map_metadata -1 "$OUTDIR/$key.jpg" 2>/dev/null; then
-    echo "  ✗ $key — could not decode ($title)"
     rm -f "$raw"
+    if [[ -s "$OUTDIR/$key.jpg" ]]; then
+      echo "  ~ $key — download failed, kept existing file"
+      continue
+    fi
+    echo "  ✗ $key — could not decode ($title)"
     continue
   fi
   rm -f "$raw"

@@ -3,13 +3,15 @@
 Start here. This folder is the shared brain of the project — goals, tasks, done work, and guides. Read in this order.
 
 ## Start here
-1. [goal.md](./goal.md) — what we're building (short videos for the channel)
+1. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
 2. [tickets/](./tickets/) — what's open right now
 3. [guide.md](./guide.md) — index of all guides
 4. [done.md](./done.md) — what's already finished
 
 ## Guides
-- [shorts-guide.md](./shorts-guide.md) — full short-video pipeline (scripts, ffmpeg recipes, captions, thumbnails)
+- [longform-guide.md](./longform-guide.md) — **long-form pipeline**: episode shape, script format, scene templates, rendering
+- [assets-guide.md](./assets-guide.md) — **asset library**: art/music/SFX fetching, license policy, credits
+- [shorts-guide.md](./shorts-guide.md) — short-video pipeline (scripts, ffmpeg recipes, captions, thumbnails)
 - [voiceover-guide.md](./voiceover-guide.md) — voiceover rules: Hindi audio, no technical words, numbers in English
 - [obscura-guide.md](./obscura-guide.md) — render webpage backgrounds as 1080x1920 PNGs
 - [takumi-guide.md](./takumi-guide.md) — Takumi card rendering (JSX → PNG)
