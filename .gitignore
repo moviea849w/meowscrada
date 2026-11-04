@@ -23,3 +23,5 @@ dist/
 !assets/art/**
 !assets/backgrounds/**
 !assets/fonts/**
+
+.env

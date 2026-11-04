@@ -1,0 +1,12 @@
+[
+  { "key": "sleeping",     "query": "person sleeping in bed",        "duration": 6 },
+  { "key": "eyes-open",    "query": "close up human eye blinking",   "duration": 5 },
+  { "key": "alarm-clock",  "query": "alarm clock ringing at night",  "duration": 5 },
+  { "key": "brain",        "query": "brain model anatomy medical",   "duration": 6 },
+  { "key": "coffee",       "query": "coffee cup steam pouring",      "duration": 5 },
+  { "key": "night-drive",  "query": "driving car at night road",     "duration": 6 },
+  { "key": "hospital",     "query": "hospital room empty bed",       "duration": 6 },
+  { "key": "rat-lab",      "query": "laboratory mouse rat research", "duration": 5 },
+  { "key": "sleep-lab",    "query": "medical monitor screen vital",  "duration": 5 },
+  { "key": "city-night",   "query": "city lights night timelapse",   "duration": 6 }
+]

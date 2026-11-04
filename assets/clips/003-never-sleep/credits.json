@@ -1,0 +1,72 @@
+{
+  "sleeping": {
+    "source": "pexels",
+    "id": "8406465",
+    "author": "Los Muertos Crew",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/woman-sleeping-on-bed-8406465/"
+  },
+  "eyes-open": {
+    "source": "pexels",
+    "id": "6095009",
+    "author": "ArtHouse Studio",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/an-eye-blinking-6095009/"
+  },
+  "alarm-clock": {
+    "source": "pexels",
+    "id": "8810536",
+    "author": "Los Muertos Crew",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/a-person-turning-off-the-alarm-clock-in-the-smartphone-8810536/"
+  },
+  "brain": {
+    "source": "pexels",
+    "id": "10642944",
+    "author": "Vincuk Konan",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/close-up-of-preserved-brain-10642944/"
+  },
+  "coffee": {
+    "source": "pexels",
+    "id": "4912720",
+    "author": "RDNE Stock project",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/person-pouring-tea-in-a-red-mug-4912720/"
+  },
+  "night-drive": {
+    "source": "pexels",
+    "id": "28928755",
+    "author": "Richard Multimedia",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/nighttime-highway-drive-with-streetlights-28928755/"
+  },
+  "hospital": {
+    "source": "pexels",
+    "id": "5203513",
+    "author": "Enrique Silva",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/a-sharing-room-in-the-hospital-5203513/"
+  },
+  "rat-lab": {
+    "source": "pexels",
+    "id": "8852700",
+    "author": "Mikhail Nilov",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/a-woman-sitting-at-the-table-8852700/"
+  },
+  "sleep-lab": {
+    "source": "pexels",
+    "id": "6130125",
+    "author": "RDNE Stock project",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/video-of-a-monitoring-heart-rate-6130125/"
+  },
+  "city-night": {
+    "source": "pexels",
+    "id": "17686937",
+    "author": "Boris Hamer",
+    "license": "Pexels License",
+    "page": "https://www.pexels.com/video/beograd-oluja-17686937/"
+  }
+}

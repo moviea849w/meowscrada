@@ -54,6 +54,21 @@ EP_JSON="$EP_DIR/episode.json"
 OUT="$WORK/final.mp4"
 
 W=1920; H=1080; FPS=30; XFADE=0.8
+RENDERER="scene"
+VOICE_LANG="hi"
+VOICE=""
+
+# episode.json can switch an episode to vertical storyboard mode:
+#   { "format": "storyboard", "voice": "en", "voiceName": "en_US-ryan-high" }
+if [[ -f "$EP_JSON" ]]; then
+  if [[ "$(jq -r '.format // empty' "$EP_JSON")" == "storyboard" ]]; then
+    RENDERER="storyboard"; W=1080; H=1920
+  fi
+  v=$(jq -r '.voice // empty' "$EP_JSON")
+  [[ -n "$v" ]] && VOICE_LANG="$v"
+  v=$(jq -r '.voiceName // empty' "$EP_JSON")
+  [[ -n "$v" ]] && VOICE="$v"
+fi
 
 FORCE=0
 SCENE_SPEC=""
@@ -128,44 +143,76 @@ step_tts() {
       dur=4.0
       ffmpeg -y -hide_banner -loglevel error -f lavfi -i "anullsrc=r=22050:cl=mono" -t "$dur" "$out"
     else
-      "$ROOT/scripts/tts" -l hi -o "$out" "$say" >/dev/null 2>&1
+      local vargs=(-l "$VOICE_LANG")
+      [[ -n "$VOICE" ]] && vargs=(-v "$VOICE")
+      "$ROOT/scripts/tts" "${vargs[@]}" -o "$out" "$say" >/dev/null 2>&1
     fi
     echo "  ✓ $idx"
   done
 }
 
 bundle_scene() {
-  [[ -s "$WORK/render-scene.mjs" ]] && [[ "$FORCE" -eq 0 ]] && return 0
-  npx esbuild "$ROOT/assets/takumi/render-scene.tsx" \
-    --bundle --platform=node --format=esm --external:takumi-js --jsx=automatic \
-    --outfile="$WORK/render-scene.mjs" --loader:.tsx=tsx >/dev/null 2>&1
+  local src="$ROOT/assets/takumi/render-scene.tsx"
+  [[ "$RENDERER" == "storyboard" ]] && src="$ROOT/assets/takumi/render-storyboard.tsx"
+  if [[ -s "$WORK/render-scene.mjs" ]] && [[ "$FORCE" -eq 0 ]]; then :; else
+    npx esbuild "$src" \
+      --bundle --platform=node --format=esm --external:takumi-js --jsx=automatic \
+      --outfile="$WORK/render-scene.mjs" --loader:.tsx=tsx >/dev/null 2>&1
+  fi
+  # animated scenes need the keyframe renderer too
+  if [[ -s "$WORK/render-frames.mjs" ]] && [[ "$FORCE" -eq 0 ]]; then :; else
+    npx esbuild "$ROOT/assets/takumi/render-frames.tsx" \
+      --bundle --platform=node --format=esm --external:takumi-js --jsx=automatic \
+      --outfile="$WORK/render-frames.mjs" --loader:.tsx=tsx >/dev/null 2>&1
+  fi
+  # footage scenes need the transparent type overlay
+  if [[ -s "$WORK/render-overlay.mjs" ]] && [[ "$FORCE" -eq 0 ]]; then :; else
+    npx esbuild "$ROOT/assets/takumi/render-overlay.tsx" \
+      --bundle --platform=node --format=esm --external:takumi-js --jsx=automatic \
+      --outfile="$WORK/render-overlay.mjs" --loader:.tsx=tsx >/dev/null 2>&1
+  fi
 }
 
 step_still() {
-  echo "▶ still"
+  echo "▶ still ($RENDERER ${W}x${H})"
   bundle_scene
   for idx in $(scene_indices); do
     out="$WORK/stills/$idx.png"
     if [[ "$FORCE" -eq 0 && -s "$out" ]]; then echo "  · $idx cached"; continue; fi
     s=$(scene_json "$idx")
+    # footage and animated scenes have no still; skip them cleanly
+    if [[ -n "$(jq -r '.footage // empty' <<<"$s")" || -n "$(jq -r '.animate // empty' <<<"$s")" ]]; then
+      echo "  · $idx (footage/animated, no still needed)"; continue
+    fi
     art=$(jq -r '.art // empty' <<<"$s")
     artpath=""
     [[ -n "$art" ]] && artpath="$ART_DIR/$art.jpg"
 
     spec="$WORK/spec-$idx.json"
-    jq --arg art "$artpath" '
-      {template: (.template // (if .art then "lower-third" else "title" end)),
-       art: $art, focus: (.focus // "center"), scrim: (.scrim // 0.28),
-       kicker: (.kicker // null), title: (.text // null), sub: (.sub // null),
-       stat: (.stat // null), titleSize: (.titleSize // null)}
-    ' <<<"$s" > "$spec"
+    if [[ "$RENDERER" == "storyboard" ]]; then
+      jq --arg panel "$((10#$idx))" '
+        {template: (.template // "sketch"),
+         draw: (.draw // null), phase: (.phase // null),
+         kicker: (.kicker // null), text: (.text // null),
+         accent: (.accent // null), sub: (.sub // null),
+         panel: (.panel // $panel)}
+      ' <<<"$s" > "$spec"
+    else
+      jq --arg art "$artpath" '
+        {template: (.template // (if .art then "lower-third" else "title" end)),
+         art: $art, focus: (.focus // "center"), scrim: (.scrim // 0.28),
+         kicker: (.kicker // null), title: (.text // null), sub: (.sub // null),
+         stat: (.stat // null), titleSize: (.titleSize // null)}
+      ' <<<"$s" > "$spec"
+    fi
 
     node "$WORK/render-scene.mjs" --spec "$spec" --out "$WORK/stills/$idx.raw.png" >/dev/null
 
     doodles=$(jq -c '.doodles // empty' <<<"$s")
     if [[ -n "$doodles" ]]; then
       jq -n --argjson marks "$doodles" --argjson seed "$((10#$idx))" \
-        '{width:1920, height:1080, color:"#d8a54a", seed:$seed, marks:$marks}' > "$WORK/doodles-$idx.json"
+        --argjson w "$W" --argjson h "$H" \
+        '{width:$w, height:$h, color:"#c8452a", seed:$seed, marks:$marks}' > "$WORK/doodles-$idx.json"
       node "$ROOT/assets/takumi/render-doodles.mjs" --spec "$WORK/doodles-$idx.json" --out "$WORK/stills/$idx.ov.png" >/dev/null 2>&1 \
         && ffmpeg -y -hide_banner -loglevel error -i "$WORK/stills/$idx.raw.png" -i "$WORK/stills/$idx.ov.png" \
              -filter_complex "[0:v][1:v]overlay=0:0" -frames:v 1 "$out"
@@ -182,12 +229,61 @@ step_clip() {
   for idx in $(scene_indices); do
     out="$WORK/clips/$idx.mp4"
     if [[ "$FORCE" -eq 0 && -s "$out" ]]; then echo "  · $idx cached"; continue; fi
-    [[ -s "$WORK/stills/$idx.png" ]] || { echo "  ✗ $idx — no still (run: still --scene $idx)"; continue; }
     [[ -s "$WORK/audio/$idx.wav" ]]  || { echo "  ✗ $idx — no audio (run: tts --scene $idx)"; continue; }
 
-    motion=$(scene_json "$idx" | jq -r '.motion // "in"')
+    s=$(scene_json "$idx")
+    motion=$(jq -r '.motion // "in"' <<<"$s")
     adur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/audio/$idx.wav")
     dur=$(python3 -c "print(round(float('$adur') + 0.7, 3))")
+
+    # --- three ways a scene can be built ---------------------------------
+    #   footage  : a stock clip from assets/clips/<slug>/<footage>.mp4, trimmed/looped
+    #   animate  : N keyframes from render-frames.tsx, interpolated by keyframes2clip.sh
+    #   still    : one Takumi still, Ken Burns motion (the original path)
+    footage=$(jq -r '.footage // empty' <<<"$s")
+    animate=$(jq -r '.animate // empty' <<<"$s")
+
+    if [[ -n "$footage" ]]; then
+      src="$ROOT/assets/clips/$SLUG/$footage.mp4"
+      [[ -s "$src" ]] || { echo "  ✗ $idx — no footage $footage (run: stock-fetch)"; continue; }
+
+      # type overlay: rendered once per scene, composited over the moving footage
+      ovl="$WORK/stills/$idx.ovl.png"
+      if [[ "$FORCE" -eq 1 || ! -s "$ovl" ]]; then
+        jq --arg panel "$((10#$idx))" '
+          {kicker:(.kicker // null), text:(.text // null),
+           accent:(.accent // null), sub:(.sub // null), panel:$panel}
+        ' <<<"$s" > "$WORK/overlay-$idx.json"
+        node "$WORK/render-overlay.mjs" --spec "$WORK/overlay-$idx.json" --out "$ovl" --w "$W" --h "$H" >/dev/null 2>&1 \
+          || { echo "  ✗ $idx — overlay render failed"; continue; }
+      fi
+
+      # loop the source if the narration runs longer than the clip; cover-crop to frame
+      ffmpeg -y -hide_banner -loglevel error \
+        -stream_loop -1 -i "$src" -i "$ovl" -t "$dur" \
+        -filter_complex "[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=$FPS[bg];[bg][1:v]overlay=0:0:format=auto,format=yuv420p" \
+        -an -c:v libx264 -preset veryfast -crf 19 "$out"
+      printf '  ✓ %s  %.1fs  [footage:%s]\n' "$idx" "$dur" "$footage"
+      continue
+    fi
+
+    if [[ -n "$animate" ]]; then
+      fdir="$WORK/frames/$idx"
+      nframes=$(jq -r '.frames // 18' <<<"$s")
+      rm -rf "$fdir"; mkdir -p "$fdir"
+      jq --arg panel "$((10#$idx))" '
+        {template:"anim", animate:(.animate), kicker:(.kicker // null),
+         text:(.text // null), accent:(.accent // null), sub:(.sub // null), panel:$panel}
+      ' <<<"$s" > "$WORK/frame-$idx.json"
+      node "$WORK/render-frames.mjs" --spec "$WORK/frame-$idx.json" --outdir "$fdir" \
+        --n "$nframes" --w "$W" --h "$H" >/dev/null 2>&1
+      "$ROOT/scripts/keyframes2clip.sh" "$fdir" "$dur" "$out" "$(jq -r '.animMode // "blend"' <<<"$s")" "$FPS" "$W" "$H"
+      continue
+    fi
+
+    [[ -s "$WORK/stills/$idx.png" ]] || { echo "  ✗ $idx — no still (run: still --scene $idx)"; continue; }
+    # overscan so zoompan has room to move; scale on the larger axis
+    over=$(python3 -c "print($W * 2 if $W > $H else $H * 2)")
     frames=$(python3 -c "print(int(round($dur*$FPS)))")
 
     case "$motion" in
@@ -201,7 +297,7 @@ step_clip() {
 
     ffmpeg -y -hide_banner -loglevel error \
       -loop 1 -i "$WORK/stills/$idx.png" \
-      -vf "scale=2400:-2,zoompan=z='$z':x='$x':y='$y':d=$frames:s=${W}x${H}:fps=$FPS,format=yuv420p" \
+      -vf "scale=${over}:-2,zoompan=z='$z':x='$x':y='$y':d=$frames:s=${W}x${H}:fps=$FPS,format=yuv420p" \
       -t "$dur" -r "$FPS" -c:v libx264 -preset veryfast -crf 18 "$out"
     printf '  ✓ %s  %.1fs\n' "$idx" "$dur"
   done
@@ -289,6 +385,21 @@ PY
   local dur
   dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/video.mp4")
 
+  # Hinglish subtitles: built from scenes.json "sub" lines against real clip timings,
+  # burned in after the mix so they survive the encode. Toggle with subtitles:false.
+  local subs=0 subfile="$WORK/subs.srt" subvf=""
+  if [[ "$(jq -r '.subtitles // true' "$EP_JSON" 2>/dev/null)" != "false" ]]; then
+    python3 "$ROOT/scripts/make-srt.py" "$SCENES" "$WORK" "$XFADE" "$subfile" >/dev/null 2>&1 \
+      && subs=1 && echo "  + subtitles (Hinglish)"
+  fi
+  if [[ "$subs" -eq 1 ]]; then
+    # subtle dark plate behind the caption, lower third, bold sans
+    local fs=$(( W / 32 ))
+    local mr=$(( W / 16 ))
+    local bottom=$(( H / 10 ))
+    subvf="subtitles='${subfile}':force_style='FontName=Poppins,FontSize=${fs},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=3,Outline=2,Shadow=0,BackColour=&H99000000,MarginV=${bottom},Alignment=2'"
+  fi
+
   if [[ -n "$track" && -f "$music" ]]; then
     echo "  + music: $track (${gain} dB)"
     python3 - "$WORK" "$N_TOTAL" "$gain" > "$WORK/music-filter.txt" <<'PY'
@@ -303,13 +414,15 @@ PY
     ffmpeg -y -hide_banner -loglevel error \
       -i "$WORK/video.mp4" "${audio[@]}" -stream_loop -1 -i "$music" \
       -filter_complex_script "$WORK/music-filter.txt" \
-      -map 0:v -map "[afinal]" -c:v copy -c:a aac -b:a 160k -movflags +faststart \
+      -map 0:v -map "[afinal]" -vf "${subvf:-null}" \
+      -c:v libx264 -preset veryfast -crf 19 -c:a aac -b:a 160k -movflags +faststart \
       -t "$dur" "$OUT"
   else
     ffmpeg -y -hide_banner -loglevel error \
       -i "$WORK/video.mp4" "${audio[@]}" \
       -filter_complex_script "$WORK/audio-filter.txt" \
-      -map 0:v -map "[anarr]" -c:v copy -c:a aac -b:a 160k -movflags +faststart \
+      -map 0:v -map "[anarr]" -vf "${subvf:-null}" \
+      -c:v libx264 -preset veryfast -crf 19 -c:a aac -b:a 160k -movflags +faststart \
       -shortest "$OUT"
   fi
   echo "  ✓ $OUT"

@@ -11,6 +11,7 @@ Start here. This folder is the shared brain of the project — goals, tasks, don
 6. [done.md](./done.md) — what's already finished
 
 ## Guides
+- [video-guide.md](./video-guide.md) — **how episodes are built now**: stock footage, 2D keyframe animation, Hinglish subtitles
 - [shorts-3d-guide.md](./shorts-3d-guide.md) — **cartoon 3D shorts** (Remotion + three.js); cannot render in this Codespace
 - [failures.md](./failures.md) — **every blocker hit, cause and fix** — read before debugging
 - [longform-guide.md](./longform-guide.md) — **long-form pipeline**: episode shape, script format, scene templates, rendering

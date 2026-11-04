@@ -1,0 +1,108 @@
+[
+  {
+    "template": "sketch",
+    "draw": "headphone",
+    "kicker": "THE MYTH",
+    "text": "Noise-cancelling headphones\ndon't block sound.",
+    "accent": "don't block sound.",
+    "motion": "in",
+    "say": "Noise-cancelling headphones don't block sound."
+  },
+  {
+    "template": "sketch",
+    "draw": "secondEngine",
+    "kicker": "WHAT THEY ACTUALLY DO",
+    "text": "They make\nthe opposite of it.",
+    "accent": "the opposite of it.",
+    "motion": "in",
+    "say": "They make the opposite of it."
+  },
+  {
+    "template": "sketch",
+    "draw": "headNoise",
+    "kicker": "ON A PLANE",
+    "text": "The engines roar.\nThen they don't.",
+    "accent": "Then they don't.",
+    "motion": "in",
+    "say": "Put them on in a plane. The engines roar, and then they don't."
+  },
+  {
+    "template": "wave",
+    "phase": "noise",
+    "kicker": "INSIDE THE EAR CUP",
+    "text": "A microphone\nlistens to the roar.",
+    "accent": "listens",
+    "motion": "in",
+    "say": "Inside the cup, a microphone listens to the roar."
+  },
+  {
+    "template": "wave",
+    "phase": "invert",
+    "kicker": "THEN A CHIP FLIPS IT",
+    "text": "Upside down.\nEvery peak becomes a trough.",
+    "accent": "Upside down.",
+    "motion": "in",
+    "say": "A chip flips that sound upside down. Every peak becomes a trough."
+  },
+  {
+    "template": "sketch",
+    "draw": "circuit",
+    "kicker": "THEN A TINY SPEAKER",
+    "text": "It plays the opposite\ninto your ear.",
+    "accent": "the opposite",
+    "motion": "in",
+    "say": "Then a tiny speaker plays it, right into your ear."
+  },
+  {
+    "template": "wave",
+    "phase": "cancel",
+    "kicker": "THE TRICK",
+    "text": "Peak meets trough.\nThey cancel out.",
+    "accent": "They cancel out.",
+    "motion": "in",
+    "say": "Two waves meet. Peak touches trough. And they cancel each other out. Silence."
+  },
+  {
+    "template": "split",
+    "kicker": "THE CATCH",
+    "text": "An engine drone\nA crying baby",
+    "sub": "Cancelling needs a steady, repeating sound. A baby isn't steady.",
+    "motion": "in",
+    "say": "Luckily, that works beautifully on a droning engine. Unluckily, it does almost nothing against a baby crying."
+  },
+  {
+    "template": "swing",
+    "kicker": "THINK OF IT LIKE THIS",
+    "text": "Pushing a swing\nat the wrong moment.",
+    "accent": "the wrong moment.",
+    "sub": "The chip pushes the air at exactly the wrong moment — thousands of times a second.",
+    "motion": "in",
+    "say": "Think of pushing a swing. Push at the wrong moment, and you cancel its motion. The chip is just pushing the air at exactly the wrong moment, a thousand times a second."
+  },
+  {
+    "template": "sketch",
+    "draw": "pressure",
+    "kicker": "THAT PRESSURE YOU FEEL",
+    "text": "Your ears can't hear it.\nBut they can feel it.",
+    "accent": "feel",
+    "motion": "in",
+    "say": "That's why the headphones feel like pressure when you switch them on. Your ears can't hear the wave, but they can still feel it."
+  },
+  {
+    "template": "quote",
+    "text": "The engine never\ngot quieter.",
+    "accent": "quieter.",
+    "motion": "out",
+    "say": "The engine never got quieter."
+  },
+  {
+    "template": "sketch",
+    "draw": "secondEngine",
+    "kicker": "THE TWIST",
+    "text": "You just got\na second engine.",
+    "accent": "a second engine.",
+    "sub": "Playing the exact opposite.",
+    "motion": "out",
+    "say": "You just got a second engine, playing the exact opposite."
+  }
+]

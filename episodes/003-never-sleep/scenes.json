@@ -1,0 +1,630 @@
+[
+  {
+    "template": "title",
+    "kicker": "A SERIOUS QUESTION",
+    "text": "What if you\nnever slept again?",
+    "accent": "never slept again?",
+    "motion": "in",
+    "say": "Ek sawaal. Agar aap dobara kabhi na soyein.",
+    "sub": "Ek sawaal — agar aap dobara kabhi na soyein.",
+    "footage": "sleeping",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "NOT ONE BAD NIGHT",
+    "text": "Forever.",
+    "motion": "in",
+    "say": "Ek raat nahi. Hamesha ke liye.",
+    "sub": "Ek raat nahi. Hamesha ke liye."
+  },
+  {
+    "template": "quote",
+    "text": "Everyone has done\nan all-nighter.",
+    "accent": "an all-nighter.",
+    "motion": "in",
+    "say": "Sabne kabhi na kabhi poori raat jaag ke kaam kiya hai.",
+    "sub": "Sabne kabhi na kabhi poori raat jaag ke kaam kiya hai.",
+    "footage": "eyes-open",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "AND FELT AWFUL",
+    "text": "So what if\nyou didn't stop?",
+    "accent": "didn't stop?",
+    "motion": "in",
+    "say": "Toh agar aap rukte hi nahi, toh kya hota?",
+    "sub": "Toh agar aap rukte hi nahi, toh kya hota?"
+  },
+  {
+    "template": "title",
+    "kicker": "1964",
+    "text": "Randy Gardner\nwas seventeen.",
+    "accent": "seventeen.",
+    "motion": "in",
+    "say": "Sattar mein, Randy Gardner naam ka ek ladka, satrah saal ka.",
+    "sub": "1964 mein, Randy Gardner naam ka ek ladka, 17 saal ka.",
+    "footage": "sleeping",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "FOR A SCHOOL SCIENCE FAIR",
+    "text": "He decided to\nstay awake.",
+    "accent": "stay awake.",
+    "motion": "in",
+    "say": "Usne school ke science fair ke liye tay kiya ki wo jaagta rahega.",
+    "sub": "Usne school ke science fair ke liye tay kiya ki wo jaagta rahega.",
+    "footage": "sleep-lab",
+    "overlay": true
+  },
+  {
+    "template": "stat",
+    "stat": "264",
+    "text": "hours without sleep",
+    "sub": "Wo 264 ghante tak jaaga. 11 din.",
+    "motion": "in",
+    "say": "Wo do sau chausath ghante tak jaaga. Gyarah din."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "WATCHED BY RESEARCHERS",
+    "text": "So we know exactly\nwhat broke, and when.",
+    "accent": "when.",
+    "motion": "in",
+    "say": "Sleep researchers usko lagatar dekhte rahe. Isliye hamein pata hai ki kya toda, aur kab.",
+    "sub": "Sleep researchers usko lagatar dekhte rahe. Isliye hamein pata hai ki kya toda, aur kab."
+  },
+  {
+    "template": "stat",
+    "stat": "2",
+    "text": "Days in: his eyes\nstopped focusing.",
+    "accent": "stopped focusing.",
+    "motion": "in",
+    "say": "Din do pe uski aankhein focus karna band kar gayi.",
+    "sub": "Din 2 pe uski aankhein focus karna band kar gayi.",
+    "footage": "eyes-open",
+    "overlay": true
+  },
+  {
+    "template": "stat",
+    "stat": "3",
+    "text": "Days in: moodiness.",
+    "motion": "in",
+    "say": "Din teen pe chidchida pan.",
+    "sub": "Din 3 pe chidchida pan."
+  },
+  {
+    "template": "stat",
+    "stat": "4",
+    "text": "Days in: his first\nhallucinations.",
+    "accent": "hallucinations.",
+    "motion": "in",
+    "say": "Din chaar pe pehli baar use cheezein dikhne lagi jo thi hi nahi.",
+    "sub": "Din 4 pe pehli baar use cheezein dikhne lagi jo thi hi nahi.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "template": "quote",
+    "text": "He mistook a signpost\nfor a person.",
+    "accent": "for a person.",
+    "motion": "in",
+    "say": "Usne ek sign board ko insaan samajh liya.",
+    "sub": "Usne ek sign board ko insaan samajh liya.",
+    "footage": "eyes-open",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "HE KNEW IT WASN'T REAL",
+    "text": "Somehow,\nthat's worse.",
+    "accent": "that's worse.",
+    "motion": "in",
+    "say": "Lekin usko pata tha ki wo asli nahi hai. Aur yahi baat zyada ajeeb hai.",
+    "sub": "Lekin usko pata tha ki wo asli nahi hai. Aur yahi baat zyada ajeeb hai."
+  },
+  {
+    "template": "stat",
+    "stat": "6-8",
+    "text": "Days in: slurred speech,\nmemory failures.",
+    "accent": "memory failures.",
+    "motion": "in",
+    "say": "Din chhe se aath tak, bolne mein ladkhada hat aur yaadash kamzor.",
+    "sub": "Din 6 se 8 tak, bolne mein ladkhada hat aur yaadash kamzor."
+  },
+  {
+    "template": "stat",
+    "stat": "10",
+    "text": "Days in: paranoid\nfantasies.",
+    "accent": "fantasies.",
+    "motion": "in",
+    "say": "Din das pe shaq aur vehmi sochne laga.",
+    "sub": "Din 10 pe shaq aur vehmi sochne laga."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "THE LAST DAY",
+    "text": "They asked him to\ncount down from 100\nby sevens.",
+    "accent": "by sevens.",
+    "motion": "in",
+    "say": "Aakhri din, unhein bola gaya sau se saat saat ghata ke gino.",
+    "sub": "Aakhri din, unhein bola gaya 100 se 7-7 ghata ke gino."
+  },
+  {
+    "template": "stat",
+    "stat": "65",
+    "text": "He stopped here.\nHe had forgotten\nthe task.",
+    "accent": "forgotten",
+    "motion": "in",
+    "say": "Wo pairahat pe ruk gaya. Uska kaam yaad hi nahi raha tha.",
+    "sub": "Wo 65 pe ruk gaya. Uska kaam yaad hi nahi raha tha.",
+    "footage": "sleep-lab",
+    "overlay": true
+  },
+  {
+    "template": "quote",
+    "text": "Then he slept\nfor fourteen hours.",
+    "accent": "fourteen hours.",
+    "motion": "in",
+    "say": "Aur phir wo chaudah ghante soya.",
+    "sub": "Aur phir wo 14 ghante soya.",
+    "footage": "hospital",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "AND HE WAS FINE",
+    "text": "No lasting damage.\nFine within a week.",
+    "accent": "Fine within a week.",
+    "motion": "in",
+    "say": "Koi pachtaawa nahi. Ek hafte mein bilkul theek.",
+    "sub": "Koi pachtaawa nahi. Ek hafte mein bilkul theek.",
+    "footage": "sleeping",
+    "overlay": true
+  },
+  {
+    "template": "quote",
+    "text": "That is the problem.",
+    "accent": "the problem.",
+    "motion": "out",
+    "say": "Aur yahi problem hai.",
+    "sub": "Aur yahi problem hai."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "IT MAKES IT LOOK SURVIVABLE",
+    "text": "Which is why\npeople keep trying.",
+    "accent": "keep trying.",
+    "motion": "in",
+    "say": "Isi wajah se log baar baar try karte hain.",
+    "sub": "Isi wajah se log baar baar try karte hain."
+  },
+  {
+    "template": "stat",
+    "stat": "453",
+    "text": "Hours awake.\n1986. Robert McDonald.",
+    "sub": "1986 mein Robert McDonald ne 453 ghante jaag ke bitaye. 18 din.",
+    "motion": "in",
+    "say": "Unnis sau chhiyaasi mein Robert McDonald ne chaar sau tirepan ghante jaag ke bitaye. Atharah din."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "IN A ROCKING CHAIR",
+    "text": "He lost weight,\ncouldn't eat,\ncouldn't remember.",
+    "accent": "couldn't remember.",
+    "motion": "in",
+    "say": "Wo kursi pe jhoolte jhoolte. Wazan kam ho gaya, khaana nahi ruka, yaadash gayi.",
+    "sub": "Wo kursi pe jhoolte jhoolte. Wazan kam ho gaya, khaana nahi ruka, yaadash gayi.",
+    "footage": "alarm-clock",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "HE WAS ALSO FINE AFTERWARDS",
+    "text": "Guinness stopped\ntracking the record\nin 1997.",
+    "accent": "in 1997.",
+    "motion": "in",
+    "say": "Wo bhi theek ho gaya. Lekin Guinness ne unnis sau sattanave mein yeh record band kar diya. Bahut khatarnaak tha.",
+    "sub": "Wo bhi theek ho gaya. Lekin Guinness ne 1997 mein yeh record band kar diya. Bahut khatarnaak tha."
+  },
+  {
+    "template": "title",
+    "kicker": "SO WHAT IS ACTUALLY HAPPENING",
+    "text": "Inside your brain,\nwhile you're awake.",
+    "accent": "while you're awake.",
+    "motion": "in",
+    "say": "Toh andar asal mein ho kya raha hai, jab aap jaag rahe hote hain.",
+    "sub": "Toh andar asal mein ho kya raha hai, jab aap jaag rahe hote hain."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "YOUR BRAIN BURNS FUEL",
+    "text": "And leaves\nsomething behind.",
+    "accent": "something behind.",
+    "motion": "in",
+    "say": "Aapka dimaag fuel jalata hai. Aur peeche kuch chhod deta hai.",
+    "sub": "Aapka dimaag fuel jalata hai. Aur peeche kuch chhod deta hai.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "kicker": "WHAT BUILDS UP",
+    "text": "A waste product\nbuilds up.",
+    "accent": "builds up.",
+    "motion": "in",
+    "say": "Usko adenosine kehte hain. Yeh ek chemical tape hai jo naapti hai ki aap kitni der se jaag rahe hain.",
+    "sub": "Usko adenosine kehte hain. Yeh ek chemical tape hai jo naapti hai ki aap kitni der se jaag rahe hain.",
+    "animate": "adenosine",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "stat",
+    "stat": "MORE",
+    "text": "Adenosine in,\nmore sleep pressure.",
+    "accent": "more sleep pressure.",
+    "motion": "in",
+    "say": "Jitna zyada adenosine, utna zyada neend ka dabav.",
+    "sub": "Jitna zyada adenosine, utna zyada neend ka dabav.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "kicker": "MORE OF IT, EVERY HOUR",
+    "text": "More pressure.",
+    "accent": "pressure.",
+    "motion": "in",
+    "say": "Caffeine usko hataati nahi. Wo usi jagah baith jaati hai jahan adenosine baithta hai.",
+    "sub": "Caffeine usko hataati nahi. Wo usi jagah baith jaati hai jahan adenosine baithta hai.",
+    "animate": "stacking",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "quote",
+    "text": "So your brain stops\nreading it.",
+    "accent": "reading it.",
+    "motion": "in",
+    "say": "Toh aapka dimaag usko padhna band kar deta hai.",
+    "sub": "Toh aapka dimaag usko padhna band kar deta hai.",
+    "footage": "coffee",
+    "overlay": true
+  },
+  {
+    "kicker": "CAFFEINE SITS IN THE SAME SOCKET",
+    "text": "Same socket.\nNothing removed.",
+    "accent": "Nothing removed.",
+    "motion": "in",
+    "say": "Dabav andar bana rehta hai. Aap kam thake hue nahi hain. Aap bas kam jaanne wale ho gaye hain.",
+    "sub": "Dabav andar bana rehta hai. Aap kam thake hue nahi hain. Aap bas kam jaanne wale ho gaye hain.",
+    "animate": "wave-in",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "title",
+    "kicker": "AND AT NIGHT",
+    "text": "The gaps between\nyour brain cells widen.",
+    "accent": "widen.",
+    "motion": "in",
+    "say": "Aur raat ko, aapke dimaag ki cells ke beech ke gap khul jaate hain.",
+    "sub": "Aur raat ko, aapke dimaag ki cells ke beech ke gap khul jaate hain.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "stat": "60%",
+    "text": "Just no longer\nread.",
+    "accent": "no longer",
+    "motion": "in",
+    "say": "Saatth percent zyada chauda.",
+    "sub": "60 percent zyada chauda.",
+    "animate": "wave-flip",
+    "kicker": "THE PRESSURE IS STILL THERE",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "kicker": "AND AT NIGHT",
+    "text": "The gaps open.",
+    "accent": "open.",
+    "motion": "in",
+    "say": "Fluid unmein se beh jaata hai aur kachra saath le jaata hai.",
+    "sub": "Fluid unmein se beh jaata hai aur kachra saath le jaata hai.",
+    "animate": "adenosine",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "text": "Cleared out.",
+    "accent": "Cleared out.",
+    "motion": "in",
+    "say": "Isliye neend cleaning jaisi lagti hai.",
+    "sub": "Isliye neend cleaning jaisi lagti hai.",
+    "animate": "cancel",
+    "kicker": "AND THE WASTE GOES",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "quote",
+    "text": "Not rest.\nCleaning.",
+    "accent": "Cleaning.",
+    "motion": "out",
+    "say": "Aaram nahi. Safai.",
+    "sub": "Aaram nahi. Safai.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "SO NOT SLEEPING ISN'T RESTING LESS",
+    "text": "It's not throwing\nout the garbage.",
+    "accent": "the garbage.",
+    "motion": "in",
+    "say": "Toh na sona ka matlab kam aaram karna nahi hai. Matlam hai kachra bahar nahi phenkna.",
+    "sub": "Toh na sona ka matlab kam aaram karna nahi hai. Matlam hai kachra bahar nahi phenkna."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "AND THE GARBAGE",
+    "text": "Is in your skull.",
+    "accent": "your skull.",
+    "motion": "in",
+    "say": "Aur wo kachra aapke dimaag ke andar hai.",
+    "sub": "Aur wo kachra aapke dimaag ke andar hai."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "BUT YOUR BRAIN DOESN'T STAY AWAKE EVENLY",
+    "text": "Little patches\nswitch off.",
+    "accent": "switch off.",
+    "motion": "in",
+    "say": "Lekin aapka dimaag poora jaagta nahi rehta. Chhote chhote hisse band ho jaate hain.",
+    "sub": "Lekin aapka dimaag poora jaagta nahi rehta. Chhote chhote hisse band ho jaate hain."
+  },
+  {
+    "kicker": "PATCHES SWITCH OFF",
+    "text": "Little pieces\nof the brain\nfall asleep.",
+    "accent": "fall asleep.",
+    "motion": "in",
+    "say": "Aapki aankhein khuli hain. Aap khade hain. Aur dimaag ka ek hissa so raha hai.",
+    "sub": "Aapki aankhein khuli hain. Aap khade hain. Aur dimaag ka ek hissa so raha hai.",
+    "animate": "patches",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "quote",
+    "text": "That's a microsleep.",
+    "accent": "microsleep.",
+    "motion": "in",
+    "say": "Usi ko microsleep kehte hain.",
+    "sub": "Usi ko microsleep kehte hain."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "WHICH IS WHY",
+    "text": "Driving home after\nan all-nighter\nis the dangerous part.",
+    "accent": "the dangerous part.",
+    "motion": "in",
+    "say": "Isliye poori raat jaag ke ghar gaadi chalana sabse khatarnaak hissa hai.",
+    "sub": "Isliye poori raat jaag ke ghar gaadi chalana sabse khatarnaak hissa hai.",
+    "footage": "eyes-open",
+    "overlay": true
+  },
+  {
+    "kicker": "DAY TWO",
+    "text": "It starts early.",
+    "accent": "early.",
+    "motion": "in",
+    "say": "Ab woh baat jo aaramdayak nahi hai. Kuch log aise hain jo ruk hi nahi paaye.",
+    "sub": "Ab woh baat jo aaramdayak nahi hai. Kuch log aise hain jo ruk hi nahi paaye.",
+    "animate": "clock",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "lower-third",
+    "kicker": "IT IS INHERITED",
+    "text": "The insomnia\nisn't a choice.",
+    "accent": "isn't a choice.",
+    "motion": "in",
+    "say": "Wo neend na aana unki marzi nahi thi. Wo khoon mein aata hai.",
+    "sub": "Wo neend na aana unki marzi nahi thi. Wo khoon mein aata hai.",
+    "footage": "night-drive",
+    "overlay": true
+  },
+  {
+    "text": "The sleep switch\ndies.",
+    "accent": "dies.",
+    "motion": "in",
+    "say": "Usko fatal familial insomnia kehte hain.",
+    "sub": "Usko fatal familial insomnia kehte hain.",
+    "animate": "clock",
+    "kicker": "FATAL FAMILIAL INSOMNIA",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "lower-third",
+    "kicker": "THE NAME IS NOT A METAPHOR",
+    "text": "The part of the brain\nthat switches sleep on\nslowly dies.",
+    "accent": "slowly dies.",
+    "motion": "in",
+    "say": "Dimaag ka wo hissa jo neend chalu karta hai, dheere dheere mar jaata hai.",
+    "sub": "Dimaag ka wo hissa jo neend chalu karta hai, dheere dheere mar jaata hai."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "IT STARTS AROUND FIFTY",
+    "text": "First insomnia.\nThen blood pressure\nand temperature.",
+    "accent": "and temperature.",
+    "motion": "in",
+    "say": "Pachaas ke aas paas shuru hota hai. Pehle neend. Phir blood pressure aur temperature.",
+    "sub": "Pachaas ke aas paas shuru hota hai. Pehle neend. Phir blood pressure aur temperature.",
+    "footage": "hospital",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "THEN MEMORY",
+    "text": "Then balance.",
+    "accent": "balance.",
+    "motion": "in",
+    "say": "Phir yaadash. Phir santulan.",
+    "sub": "Phir yaadash. Phir santulan."
+  },
+  {
+    "template": "stat",
+    "stat": "18",
+    "text": "months, on average,\nfrom first symptom\nto death.",
+    "accent": "to death.",
+    "motion": "in",
+    "say": "Pehle lakshan se maut tak, ausat mein atharah mahine.",
+    "sub": "Pehle lakshan se maut tak, ausat mein 18 mahine.",
+    "footage": "brain",
+    "overlay": true
+  },
+  {
+    "text": "On average.",
+    "accent": "average.",
+    "motion": "in",
+    "say": "Choohe bhi thakan se nahi mare the.",
+    "sub": "Choohe bhi thakan se nahi mare the.",
+    "animate": "clock",
+    "kicker": "EIGHTEEN MONTHS",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "lower-third",
+    "kicker": "RESEARCHERS KEPT THEM AWAKE",
+    "text": "They survived about\ntwo to three weeks.",
+    "accent": "two to three weeks.",
+    "motion": "in",
+    "say": "Researchers unhein lagatar jaagta rakhe. Wo do se teen hafte tak jiye.",
+    "sub": "Researchers unhein lagatar jaagta rakhe. Wo 2 se 3 hafte tak jiye.",
+    "footage": "hospital",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "THEY ATE MORE",
+    "text": "And lost weight anyway.",
+    "accent": "lost weight",
+    "motion": "in",
+    "say": "Wo zyada khaate the. Phir bhi wazan kam hota gaya.",
+    "sub": "Wo zyada khaate the. Phir bhi wazan kam hota gaya."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "THEIR TEMPERATURE DROPPED",
+    "text": "Their skin\nbroke down.",
+    "accent": "broke down.",
+    "motion": "in",
+    "say": "Unka temperature gir gaya. Unki skin fatne lagi.",
+    "sub": "Unka temperature gir gaya. Unki skin fatne lagi."
+  },
+  {
+    "template": "quote",
+    "text": "Something in the\nimmune system failed.",
+    "accent": "immune system failed.",
+    "motion": "in",
+    "say": "Unke andar ka kuch system kaam karna band kar gaya.",
+    "sub": "Unke andar ka kuch system kaam karna band kar gaya.",
+    "footage": "rat-lab",
+    "overlay": true
+  },
+  {
+    "kicker": "THEY ATE MORE",
+    "text": "And lost weight.",
+    "accent": "lost weight.",
+    "motion": "in",
+    "say": "Lekin insaanon ke baare mein, koi bhi sirf neend na aane se marta hua darj nahi hai.",
+    "sub": "Lekin insaanon ke baare mein, koi bhi sirf neend na aane se marta hua darj nahi hai.",
+    "animate": "stacking",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "lower-third",
+    "kicker": "EVERYONE WHO STAYED AWAKE LONGEST",
+    "text": "Recovered.",
+    "accent": "Recovered.",
+    "motion": "in",
+    "say": "Jo sabse zyada jaage, wo sab theek ho gaye.",
+    "sub": "Jo sabse zyada jaage, wo sab theek ho gaye."
+  },
+  {
+    "template": "quote",
+    "text": "So the honest answer\nis worse than dying.",
+    "accent": "worse than dying.",
+    "motion": "in",
+    "say": "Toh sach mein jawaab maut se bhi zyada ajeeb hai.",
+    "sub": "Toh sach mein jawaab maut se bhi zyada ajeeb hai.",
+    "footage": "hospital",
+    "overlay": true
+  },
+  {
+    "template": "lower-third",
+    "kicker": "YOU WOULDN'T FALL OVER",
+    "text": "You'd keep going.",
+    "accent": "keep going.",
+    "motion": "in",
+    "say": "Aap girte nahi. Aap chalte rehte.",
+    "sub": "Aap girte nahi. Aap chalte rehte."
+  },
+  {
+    "template": "lower-third",
+    "kicker": "YOU'D JUST STOP BEING YOU",
+    "text": "A few percent\nat a time.",
+    "accent": "at a time.",
+    "motion": "in",
+    "say": "Aap bas dheere dheere aap nahi rehte. Thoda thoda karke.",
+    "sub": "Aap bas dheere dheere aap nahi rehte. Thoda thoda karke."
+  },
+  {
+    "template": "quote",
+    "text": "Starting on day two,\nwith your eyes.",
+    "accent": "with your eyes.",
+    "motion": "in",
+    "say": "Din do se shuru, aapki aankhon se.",
+    "sub": "Din 2 se shuru, aapki aankhon se.",
+    "footage": "city-night",
+    "overlay": true
+  },
+  {
+    "template": "title",
+    "kicker": "WHAT IF YOU NEVER SLEPT",
+    "text": "You already know\nwhat it looks like.",
+    "accent": "what it looks like.",
+    "motion": "in",
+    "say": "Aapko pehle se pata hai ki wo kaisa lagta hai.",
+    "sub": "Aapko pehle se pata hai ki wo kaisa lagta hai."
+  },
+  {
+    "text": "You stop\nbeing you.",
+    "accent": "being you.",
+    "motion": "in",
+    "say": "Wo har wo raat hai jo aapne kabhi jaag ke bitaayi hai.",
+    "sub": "Wo har wo raat hai jo aapne kabhi jaag ke bitaayi hai.",
+    "animate": "patches",
+    "kicker": "A FEW PERCENT\nAT A TIME",
+    "frames": 18,
+    "animMode": "blend"
+  },
+  {
+    "template": "title",
+    "kicker": "",
+    "text": "Stretched out\nuntil the end.",
+    "accent": "the end.",
+    "motion": "out",
+    "say": "Bas aakhir tak khinch ke.",
+    "sub": "Bas aakhir tak khinch ke.",
+    "footage": "night-drive",
+    "overlay": true
+  }
+]
