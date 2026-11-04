@@ -58,13 +58,26 @@ jobs:
       - name: System dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg jq python3 nodejs npm libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+          # cairo/pango are only needed to build node-canvas; skip if the cache has it
+          sudo apt-get install -y -qq ffmpeg jq python3 nodejs npm
           ffmpeg -version | head -1
           node -v
 
       - name: Node dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: node_modules
+          key: npm-${{ hashFiles('package-lock.json') }}
+
+      - name: Install node dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |
-          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+          # Kino's postinstall downloads a dead ffmpeg build (404) and aborts npm.
+          # It is unused by the render path, so skip install scripts entirely —
+          # the pipeline uses the system ffmpeg installed above.
+          sudo apt-get install -y -qq libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+          npm ci --no-audit --no-fund --ignore-scripts || npm install --no-audit --no-fund --ignore-scripts
 
       - name: Piper (text to speech)
         run: |

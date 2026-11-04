@@ -135,22 +135,43 @@ step_art() {
 
 step_tts() {
   echo "▶ tts"
+  # Piper is single-threaded, so run several lines at once. Each scene writes its
+  # own WAV, so there is nothing to lock. Cores come from the machine, capped at 4.
+  local jobs=$(( $(nproc) ))
+  (( jobs > 4 )) && jobs=4
+  (( jobs < 1 )) && jobs=1
+  echo "  · ${jobs} parallel"
+
+  local todo=()
   for idx in $(scene_indices); do
     out="$WORK/audio/$idx.wav"
     if [[ "$FORCE" -eq 0 && -s "$out" ]]; then echo "  · $idx cached"; continue; fi
+    todo+=("$idx")
+  done
+  [[ ${#todo[@]} -eq 0 ]] && return 0
+
+  tts_one() {
+    local idx="$1"
+    local out="$WORK/audio/$idx.wav"
+    local say
     say=$(scene_json "$idx" | jq -r '.say // empty')
     if [[ -z "$say" ]]; then
-      dur=4.0
-      ffmpeg -y -hide_banner -loglevel error -f lavfi -i "anullsrc=r=22050:cl=mono" -t "$dur" "$out"
-    else
-      local vargs=(-l "$VOICE_LANG")
-      [[ -n "$VOICE" ]] && vargs=(-v "$VOICE")
-      "$ROOT/scripts/tts" "${vargs[@]}" -o "$out" "$say" >/dev/null 2>&1
+      ffmpeg -y -hide_banner -loglevel error -f lavfi -i "anullsrc=r=22050:cl=mono" -t 4.0 "$out"
+      return 0
     fi
-    echo "  ✓ $idx"
+    local vargs=(-l "$VOICE_LANG")
+    [[ -n "$VOICE" ]] && vargs=(-v "$VOICE")
+    "$ROOT/scripts/tts" "${vargs[@]}" -o "$out" "$say" >/dev/null 2>&1
+  }
+  export -f tts_one scene_json
+  export WORK VOICE_LANG VOICE ROOT SCENES
+
+  printf '%s\n' "${todo[@]}" | xargs -P "$jobs" -I{} bash -c 'tts_one "$@"' _ {}
+
+  for idx in "${todo[@]}"; do
+    [[ -s "$WORK/audio/$idx.wav" ]] && echo "  ✓ $idx" || echo "  ✗ $idx"
   done
 }
-
 bundle_scene() {
   local src="$ROOT/assets/takumi/render-scene.tsx"
   [[ "$RENDERER" == "storyboard" ]] && src="$ROOT/assets/takumi/render-storyboard.tsx"
