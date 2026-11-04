@@ -39,7 +39,8 @@ tmpfiles out.mp4
 ## Scripts
 | Script | Purpose |
 |---|---|
-| `scripts/longform.sh DIR` | **Main pipeline** — build a long-form episode from `scenes.json` |
+| `scripts/pipeline.sh STEP [episode]` | **Run one pipeline step** (`art`/`tts`/`still`/`clip`/`merge`/`audio`/`upload`/`all`), with `--scene N` control |
+| `scripts/longform.sh DIR` | Run the whole episode pipeline in one go |
 | `scripts/art-fetch.sh JSON DIR` | Fetch public-domain artwork (Wikimedia/Wikipedia APIs) |
 | `scripts/audio-fetch.sh music\|sfx JSON DIR` | Build the CC0/CC-BY music and SFX library |
 | `scripts/math-short.sh A B` | Vertical quiz short (Takumi cards + ffmpeg) |

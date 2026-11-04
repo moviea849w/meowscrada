@@ -3,10 +3,11 @@
 Start here. This folder is the shared brain of the project — goals, tasks, done work, and guides. Read in this order.
 
 ## Start here
-1. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
-2. [tickets/](./tickets/) — what's open right now
-3. [guide.md](./guide.md) — index of all guides
-4. [done.md](./done.md) — what's already finished
+1. [concept.md](./concept.md) — **current concept direction — under revision**
+2. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
+3. [tickets/](./tickets/) — what's open right now
+4. [guide.md](./guide.md) — index of all guides
+5. [done.md](./done.md) — what's already finished
 
 ## Guides
 - [longform-guide.md](./longform-guide.md) — **long-form pipeline**: episode shape, script format, scene templates, rendering

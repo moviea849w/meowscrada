@@ -2,6 +2,10 @@
 
 **Make curiosity-based educational explainer videos for YouTube — long-form and short-form.**
 
+> ⚠️ **Concept under revision** — Episode 1 was built end to end but the concept was
+> judged not good. See [concept.md](./concept.md) before starting new episodes.
+> Everything below describes the *format* that works; the *niche* is still open.
+
 ## Format
 - **Long-form:** 5–8 min, 16:9 1920x1080, one curiosity question per episode
 - **Shorts:** 9:16 1080x1920, 15–60s, cut from the long-form or standalone

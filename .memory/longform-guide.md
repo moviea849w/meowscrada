@@ -90,7 +90,34 @@ Rules:
 Rough.js v4 gotcha: there is no `rc.seed()` method. Randomness is a **per-shape `seed` option**.
 
 ## Rendering
-`scripts/longform.sh <slug>` builds each scene as a short video clip (zoompan + text overlay), then concatenates with crossfades and lays the narration underneath.
+`scripts/pipeline.sh <step>` runs **one stage at a time**. Everything is cached in
+`.temp/<slug>/`, so re-running a step only redoes what's missing.
+
+| Step | Does | Output |
+|---|---|---|
+| `art` | download artwork | `assets/art/<slug>/` |
+| `tts` | Hindi narration per scene | `.temp/<slug>/audio/` |
+| `still` | Takumi still + Rough.js doodles | `.temp/<slug>/stills/` |
+| `clip` | Ken Burns motion | `.temp/<slug>/clips/` |
+| `merge` | crossfade all clips | `.temp/<slug>/video.mp4` |
+| `audio` | narration + music mix | `.temp/<slug>/final.mp4` |
+| `upload` | push to tmpfiles | link |
+| `all` | every step in order | link |
+
+### Scene-level control
+
+```bash
+./scripts/pipeline.sh still 001-medieval-king --scene 11        # one scene
+./scripts/pipeline.sh clip  001-medieval-king --scene 3-7       # range
+./scripts/pipeline.sh tts   001-medieval-king --scene 1,4,9     # list
+./scripts/pipeline.sh still 001-medieval-king --scene 2-5,12 --force
+```
+
+`--scene` accepts `N`, `N-M`, or comma lists, 1-based and inclusive.
+`--force` ignores the cache for the selected step.
+
+**Typical loop while designing:** edit `scenes.json` → `still --scene N --force` (~1s) →
+look → repeat. Only run `clip`/`merge`/`audio` when the stills are right.
 
 Why clip-per-scene: it keeps memory flat for an 8-minute video, lets you re-render one scene, and makes timing changes cheap.
 
