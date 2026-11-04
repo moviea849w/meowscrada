@@ -70,6 +70,13 @@ if [[ ! -x "$ROOT/scripts/tts" ]]; then
   exit 1
 fi
 
+# fail fast: a missing voice engine otherwise shows up as 60 silent ✗ lines
+if ! command -v piper >/dev/null 2>&1; then
+  echo "✗ piper not on PATH — text to speech cannot run"
+  echo "  install: pip install piper-tts   (and add ~/.local/bin to PATH)"
+  exit 1
+fi
+
 # voice models are not in the repo (too large) — fetch on demand
 VOICE_DIR="${HOME}/.local/share/piper-voices"
 VOICE_LANG=$(jq -r '.voice // "hi"' "$EP_DIR/episode.json" 2>/dev/null)

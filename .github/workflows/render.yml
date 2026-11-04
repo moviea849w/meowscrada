@@ -81,10 +81,13 @@ jobs:
 
       - name: Piper (text to speech)
         run: |
-          if [ ! -x scripts/tts ] || ! scripts/tts --help >/dev/null 2>&1; then
-            pip install --quiet piper-tts || pip install --quiet piper-tts-legacy || true
-          fi
-          command -v piper || echo "piper not on PATH — scripts/tts will report if missing"
+          pip install --quiet piper-tts
+          # pip puts the console script in ~/.local/bin on the runner, which is not
+          # on PATH by default — add it and prove the binary runs
+          export PATH="$HOME/.local/bin:$PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          command -v piper || { echo "::error::piper not installed"; exit 1; }
+          piper --help >/dev/null 2>&1 && echo "piper OK" || { echo "::error::piper broken"; exit 1; }
 
       - name: Cache voice models
         uses: actions/cache@v4
