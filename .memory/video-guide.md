@@ -103,11 +103,23 @@ Digits read faster on screen; the voice still speaks them.
 
 ## Language rules
 
-| Track | Language |
-|---|---|
-| `say` (audio) | Hindi, no English technical words, numbers spoken in English |
-| on-screen `text`/`kicker` | English only |
-| `sub` (captions) | Hinglish — Hindi in Latin script |
+| Track | Language | Script |
+|---|---|---|
+| `say` (audio) | Hindi | **Devanagari only** |
+| on-screen `text`/`kicker` | English | Latin |
+| `sub` (captions) | Hinglish | Latin |
+
+**Piper's Hindi voice only reads Devanagari.** Roman Hindi (`"Ek sawaal. Agar aap..."`)
+is fed to the phonemizer as English letters and comes out as gibberish — it sounds
+like Hindi-accented nonsense. Every `say` line must be in Devanagari.
+
+`scripts/set-devanagari.py` holds the episode-003 narration as a checked-in
+dictionary; `scripts/roman2devanagari.py` is a partial transliterator that is
+**not** reliable for full scripts (it maps vocabulary, not phonetics) — write
+Devanagari directly instead.
+
+Numbers: written as Devanagari words in `say` (the voice reads bare digits
+unreliably mid-sentence), but as **digits in `sub`** (faster to read on screen).
 
 ## Rendering
 
