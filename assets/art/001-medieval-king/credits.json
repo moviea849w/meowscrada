@@ -1,0 +1,58 @@
+{
+  "richard-portrait": {
+    "title": "File:The_Westminster_Portrait_of_Richard_II_of_England_(1390s).jpg",
+    "author": "anonymous / Possibly André Beauneveu ",
+    "license": "Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:The_Westminster_Portrait_of_Richard_II_of_England_(1390s).jpg",
+    "size": "874x1750",
+    "sourceWidth": 874
+  },
+  "coronation": {
+    "title": "File:Coronation portrait of Richard II, Westminster Abbey.jpg",
+    "author": "JRennocks ",
+    "license": "CC BY-SA 4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Coronation_portrait_of_Richard_II,_Westminster_Abbey.jpg",
+    "size": "2042x2990",
+    "sourceWidth": 2042
+  },
+  "wat-taylor": {
+    "title": "File:DeathWatTylerFull.jpg",
+    "author": "Unknown authorUnknown author ",
+    "license": "Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:DeathWatTylerFull.jpg",
+    "size": "1422x1130",
+    "sourceWidth": 1422
+  },
+  "tower": {
+    "title": "File:The Tower of London - Poems of Charles, Duke of Orleans (c.1500), f.73 - BL Royal MS 16 F II.jpg",
+    "author": " ",
+    "license": "CC0",
+    "page": "https://commons.wikimedia.org/wiki/File:The_Tower_of_London_-_Poems_of_Charles,_Duke_of_Orleans_(c.1500),_f.73_-_BL_Royal_MS_16_F_II.jpg",
+    "size": "1060x1504",
+    "sourceWidth": 1060
+  },
+  "plague": {
+    "title": "File:Jean Froissart, Chroniques, 154v, 12148 btv1b8438605hf336, crop.jpg",
+    "author": "Jean Froissart ",
+    "license": "Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Jean_Froissart,_Chroniques,_154v,_12148_btv1b8438605hf336,_crop.jpg",
+    "size": "2400x2314",
+    "sourceWidth": 3261
+  },
+  "crown": {
+    "title": "File:Sacre de Philippe Auguste.jpg",
+    "author": " Unknown authorUnknown author ",
+    "license": "Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Sacre_de_Philippe_Auguste.jpg",
+    "size": "979x866",
+    "sourceWidth": 979
+  },
+  "castle": {
+    "title": "File:Pontefract Castle.jpg",
+    "author": " ",
+    "license": "Public domain",
+    "page": "https://commons.wikimedia.org/wiki/File:Pontefract_Castle.jpg",
+    "size": "1200x692",
+    "sourceWidth": 1200
+  }
+}

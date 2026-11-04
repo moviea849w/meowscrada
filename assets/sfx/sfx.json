@@ -1,0 +1,10 @@
+[
+  { "key": "whoosh", "query": "whoosh transition", "maxDuration": 4 },
+  { "key": "boom", "query": "cinematic boom impact", "maxDuration": 4 },
+  { "key": "riser", "query": "riser tension build", "maxDuration": 8 },
+  { "key": "page-turn", "query": "paper page turn", "maxDuration": 3 },
+  { "key": "bell", "query": "church bell single", "maxDuration": 12 },
+  { "key": "crowd", "query": "medieval crowd noise", "maxDuration": 30 },
+  { "key": "sword", "query": "sword clash", "maxDuration": 4 },
+  { "key": "heartbeat", "query": "heartbeat slow", "maxDuration": 10 }
+]

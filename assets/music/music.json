@@ -1,0 +1,6 @@
+[
+  { "key": "medieval-ambient", "query": "medieval ambient music", "minDuration": 45 },
+  { "key": "drone-tense", "query": "dark ambient drone", "minDuration": 25 },
+  { "key": "piano-sad", "query": "sad piano", "minDuration": 45 },
+  { "key": "documentary", "query": "documentary background music", "minDuration": 15 }
+]

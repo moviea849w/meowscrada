@@ -13,10 +13,13 @@ node_modules/
 out/
 dist/
 
-# rendered media
+# rendered media (temp renders only — the asset library IS committed)
 *.mp4
 *.mov
-*.wav
-*.mp3
 
-# keep the fonts + SVG assets (assets/fonts, assets/svg) tracked
+# keep the shared asset library tracked
+!assets/music/**
+!assets/sfx/**
+!assets/art/**
+!assets/backgrounds/**
+!assets/fonts/**
