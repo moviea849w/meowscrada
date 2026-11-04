@@ -23,6 +23,9 @@ Guides and references for making YouTube videos.
 - **Python + moviepy** — programmatic video creation
 - **Node.js + remotion** — code-driven videos
 
+## Guides
+- [shorts-guide.md](./shorts-guide.md) — full guide: making + sharing short videos (scripts, ffmpeg recipes, captions, thumbnails)
+
 ## Helper scripts
 - `scripts/make-short.sh "TEXT" 10` — render a vertical test short to `.temp/` and upload it
   - `--no-upload` to render only

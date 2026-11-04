@@ -4,6 +4,7 @@
 - [done.md](./done.md) — Completed work log
 - [tickets/](./tickets/) — Task tickets
 - [guide.md](./guide.md) — Reference guides
+- [shorts-guide.md](./shorts-guide.md) — Short-video pipeline guide
 
 ## How to use
 1. Check `goal.md` first for the big picture.
