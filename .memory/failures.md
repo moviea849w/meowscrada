@@ -79,6 +79,46 @@ This Codespace container has **no working GPU process**. It is not a flag, drive
 configuration problem — software rasterisation is also blocked. Remotion needs a live
 GPU process to composite three.js frames, so **it cannot render here at all**.
 
+### Failure 7 — Xvfb virtual display
+```
+exit=124 (timeout, no DOM output)
+```
+**Tried:** `xvfb-run -a --server-args="-screen 0 1280x720x24"` + SwiftShader flags,
+after installing `libxi-dev libxext-dev libgl1-mesa-dev libglu1-mesa-dev xvfb`.
+A virtual X display does not help; the GPU process still fails. ❌
+
+### Failure 8 — Obscura + three.js
+```json
+{"ok":false}   // canvas.getContext('webgl') returns null
+```
+**Cause:** Obscura **deliberately disables WebGL** to prevent fingerprinting. From its
+own docs: *"There is no GPU renderer among them: `canvas.getContext('webgl')` returns
+`null`."* Obscura has a layout + paint layer but **no GPU renderer by design**.
+three.js cannot run in it. ❌ **Impossible, not a config issue.**
+
+### Failure 9 — headless-gl (CPU three.js)
+`npm i gl` fails to compile without X11 headers; after
+`sudo apt-get install libxi-dev libxext-dev libgl1-mesa-dev libglu1-mesa-dev` it builds
+but is abandoned: even if it worked, CPU rasterisation at 1080x1920 is roughly
+**10–40 s/frame**, i.e. **5–12 hours** for a 62 s short. Not a usable workflow on
+2 cores. ⏭️ **Rejected on speed, not feasibility.**
+
+---
+
+## DECISION (2026-11-04)
+
+**3D / Remotion / three.js is out of scope while the only machine is this Codespace.**
+
+The user's laptop is broken (4-day repair) and they work over SSH from Termux on a
+phone. There is no fallback render machine.
+
+**Consequence:** all video work must render on CPU in this container, in minutes not
+hours. That means **2D** — Takumi stills + ffmpeg motion, which is already proven and
+renders a 4.5-minute episode in ~12 minutes.
+
+`/workspaces/remotion-studio` is kept on disk but is not part of the workflow. The
+`cartoon-3d-short` skill stays installed for when a capable machine exists again.
+
 ### Options not yet tried
 1. `--disable-gpu --disable-software-rasterizer` — may let Chrome run with no GL at all,
    but **three.js needs WebGL**, so this would render blank frames.

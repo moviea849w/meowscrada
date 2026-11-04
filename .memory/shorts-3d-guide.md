@@ -7,6 +7,11 @@ gliding cameras, synthesized SFX + music. Rendered with three.js inside Remotion
 
 > ⚠️ **Cannot render in this Codespace.** Chrome's GPU process fails in every mode
 > (see `failures.md`). Authoring works here; rendering must happen elsewhere.
+>
+> **Decision (2026-11-04): 3D is out of scope.** The only machine available is this
+> Codespace (the user's laptop is broken, working over SSH from Termux). CPU 3D would
+> take 5–12 hours per short. All video work is **2D via Takumi + ffmpeg** until a
+> capable machine exists. This skill is kept for later.
 
 ## Where things live
 

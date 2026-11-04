@@ -3,11 +3,12 @@
 Start here. This folder is the shared brain of the project — goals, tasks, done work, and guides. Read in this order.
 
 ## Start here
-1. [concept.md](./concept.md) — **current concept direction — under revision**
-2. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
-3. [tickets/](./tickets/) — what's open right now
-4. [guide.md](./guide.md) — index of all guides
-5. [done.md](./done.md) — what's already finished
+1. [constraints.md](./constraints.md) — **hard limits of this machine — read before proposing anything**
+2. [concept.md](./concept.md) — **current concept direction — under revision**
+3. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
+4. [tickets/](./tickets/) — what's open right now
+5. [guide.md](./guide.md) — index of all guides
+6. [done.md](./done.md) — what's already finished
 
 ## Guides
 - [shorts-3d-guide.md](./shorts-3d-guide.md) — **cartoon 3D shorts** (Remotion + three.js); cannot render in this Codespace
