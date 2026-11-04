@@ -30,11 +30,14 @@ tmpfiles out.mp4
 | `.memory/shorts-guide.md` | Full short-video pipeline |
 | `.memory/voiceover-guide.md` | Voiceover rules (Hindi, numbers in English) |
 | `.memory/obscura-guide.md` | Webpage → PNG backgrounds |
+| `.memory/takumi-guide.md` | Takumi card rendering |
+| `.memory/kino-guide.md` | Kino JSON → MP4 |
 
 ## Scripts
 | Script | Purpose |
 |---|---|
-| `scripts/math-short.sh A B` | Hindi math quiz short (timer, options, voiceover) |
+| `scripts/math-short.sh A B` | Hindi math quiz short — Takumi cards + ffmpeg animation |
+| `scripts/kino-math.sh A B` | Same quiz built as a Kino JSON composition |
 | `scripts/make-short.sh "TEXT" N` | Simple text short |
 | `scripts/tts [-l hi] "text"` | Local TTS (Piper) → WAV |
 | `scripts/bg-render.sh URL` | Obscura screenshot → 1080x1920 PNG |
