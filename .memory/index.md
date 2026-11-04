@@ -5,6 +5,8 @@
 - [tickets/](./tickets/) — Task tickets
 - [guide.md](./guide.md) — Reference guides
 - [shorts-guide.md](./shorts-guide.md) — Short-video pipeline guide
+- [voiceover-guide.md](./voiceover-guide.md) — Voiceover rules (Hindi, no technical words)
+- [obscura-guide.md](./obscura-guide.md) — Obscura PNG background renderer
 
 ## How to use
 1. Check `goal.md` first for the big picture.

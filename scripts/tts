@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# tts — fast local text-to-speech (Piper), Hindi + English
+#
+# Usage:
+#   tts "Hello world"                     # English (default voice)
+#   tts -l hi "नमस्ते दुनिया"             # Hindi
+#   tts -o out.wav "text"
+#   tts -v en_US-ryan-high "text"         # pick a voice
+#   echo "text" | tts -l hi               # read from stdin
+#
+# Voices in ~/.local/share/piper-voices:
+#   en_US-lessac-medium (default) | en_US-ryan-high | hi_IN-pratham-medium
+#
+# Output: WAV (22050 Hz mono). Convert with: ffmpeg -i out.wav out.mp3
+
+set -euo pipefail
+
+VOICE_DIR="$HOME/.local/share/piper-voices"
+LANG_CODE="en"
+VOICE=""
+OUT=""
+
+usage() { sed -n '2,15p' "$0"; exit "${1:-0}"; }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -l|--lang) LANG_CODE="$2"; shift 2 ;;
+    -v|--voice) VOICE="$2"; shift 2 ;;
+    -o|--out) OUT="$2"; shift 2 ;;
+    -h|--help) usage 0 ;;
+    --) shift; break ;;
+    *) break ;;
+  esac
+done
+
+if [[ -z "$VOICE" ]]; then
+  case "$LANG_CODE" in
+    hi|hi-IN|hi_IN|hindi) VOICE="hi_IN-pratham-medium" ;;
+    en|en-US|en_US|english|*) VOICE="en_US-lessac-medium" ;;
+  esac
+fi
+
+MODEL="$VOICE_DIR/$VOICE.onnx"
+[[ -f "$MODEL" ]] || { echo "✗ voice not found: $MODEL" >&2; echo "  available: $(ls "$VOICE_DIR"/*.onnx 2>/dev/null | xargs -n1 basename | sed 's/\.onnx//' | tr '\n' ' ')" >&2; exit 1; }
+
+TEXT="${*:-}"
+[[ -z "$TEXT" ]] && TEXT="$(cat)"
+[[ -z "$TEXT" ]] && { echo "✗ no text given" >&2; exit 2; }
+
+[[ -z "$OUT" ]] && OUT="tts-$(date +%Y%m%d-%H%M%S).wav"
+
+TEXT="$TEXT" MODEL="$MODEL" OUT="$OUT" python3 - <<'PY'
+import os, wave
+from piper import PiperVoice
+voice = PiperVoice.load(os.environ["MODEL"])
+with wave.open(os.environ["OUT"], "wb") as w:
+    voice.synthesize_wav(os.environ["TEXT"], w)
+PY
+
+echo "✓ $OUT"
