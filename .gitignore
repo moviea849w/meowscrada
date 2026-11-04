@@ -2,11 +2,21 @@
 .temp/
 *.tmp
 *.temp
-obscura-x86_64-linux.tar.gz
+
+# local binaries (downloaded, not source)
 obscura
 obscura-worker
+obscura-*.tar.gz
+
+# deps / build output
 node_modules/
 out/
 dist/
+
+# rendered media
 *.mp4
 *.mov
+*.wav
+*.mp3
+
+# keep the fonts + SVG assets (assets/fonts, assets/svg) tracked

@@ -4,6 +4,7 @@ Rules for voiceover in short videos.
 
 ## Language
 - **Hindi voiceover**, spoken in natural everyday Hindi.
+- **On-screen text is English only** (no Devanagari anywhere on screen).
 - **No technical words or English technical terms in the Hindi audio.**
   - Say it the simple Hindi way a normal person would speak.
   - Avoid jargon like: "plus", "minus", "option", "timer", "video", "subscribe", "like", "share", "comment", "equation", "answer" (as an English word).
@@ -11,9 +12,10 @@ Rules for voiceover in short videos.
 - Keep sentences short and clear, easy to follow.
 
 ## On-screen text
-- Text can be in Hindi script (Devanagari) using Noto Sans Devanagari.
+- **English only — no Devanagari on screen.** All titles, options, labels and reveals are in English.
+- Use DejaVu Sans Bold (`/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf`).
 - Keep on-screen text short: 3–6 words.
-- Numbers are fine on screen (e.g. 12 + 15 = ?).
+- Hindi exists **only in the voiceover**, never as text on screen.
 
 ## Numbers
 - **Numbers are spoken in English** (e.g. "12", "15", "27") — mixed into the Hindi sentence naturally.
