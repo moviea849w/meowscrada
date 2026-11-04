@@ -168,6 +168,9 @@ Kokoro's Hindi is rated grade C, no better. Natural Hindi models need a GPU.
 | Openverse duration filter matched nothing | duration is in **milliseconds**, not seconds | divide by 1000 |
 | Double render corrupting output | two `longform.sh` launched at once | `pipeline.sh` runs one step; resume skips cached clips |
 | Headline orphan ("in" on its own line) | `split` template text column too narrow | width 900, size 68 |
+| `i: command not found` then `syntax error near unexpected token fi` | `set -a; source envfile` exports every variable, including loop counters | parse the env file with `while IFS='=' read` and export only those keys |
+| `stock-fetch.sh` found nothing, JSON decode error | `python3 - <<'PY'` heredoc occupies stdin, so the piped curl output was discarded | pass the JSON as an argv argument (`python3 -c '...' "$body"`) |
+| Accent word lost its spaces ("can't feel it" → "can'tfeelit") | `split(accent)` with an empty prefix/suffix and flex row collapsed whitespace | use `indexOf` + `slice`, keeping the surrounding spaces |
 
 ---
 

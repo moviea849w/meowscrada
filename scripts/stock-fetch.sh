@@ -39,10 +39,13 @@ mkdir -p "$OUTDIR"
 
 ENV_FILE="${HOME}/.config/meowscrada/env"
 if [[ -f "$ENV_FILE" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "$ENV_FILE"
-  set +a
+  # parsed, not sourced: `set -a; source` exports every variable and breaks loops
+  while IFS='=' read -r k v; do
+    [[ -z "$k" || "$k" == \#* ]] && continue
+    v="${v%\"}"; v="${v#\"}"
+    printf -v "$k" '%s' "$v"
+    export "$k"
+  done < "$ENV_FILE"
 fi
 
 PEXELS_KEY="${PEXELS_API_KEY:-}"

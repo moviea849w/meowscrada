@@ -431,6 +431,29 @@ PY
 step_upload() {
   echo "▶ upload"
   [[ -s "$OUT" ]] || { echo "  ✗ nothing to upload (run: audio)"; return 1; }
+
+  # Telegram first when configured — it reaches the phone directly and never expires
+  local env_file="${HOME}/.config/meowscrada/env"
+  if [[ -f "$env_file" ]]; then
+    # parse KEY=value without `source` — sourcing with `set -a` exports every
+    # loop variable in the script and breaks later loops
+    while IFS='=' read -r k v; do
+      [[ -z "$k" || "$k" == \#* ]] && continue
+      v="${v%\"}"; v="${v#\"}"
+      printf -v "$k" '%s' "$v"
+      export "$k"
+    done < "$env_file"
+  fi
+  if [[ -n "${TELEGRAM_BOT_TOKEN:-}" && -n "${TELEGRAM_CHAT_ID:-}" ]]; then
+    local caption
+    caption=$(jq -r '.title // empty' "$EP_JSON" 2>/dev/null)
+    [[ -n "$caption" ]] || caption="$SLUG"
+    local staged="$ROOT/.temp/$SLUG-final.mp4"
+    cp "$OUT" "$staged"
+    "$ROOT/scripts/telegram-send.sh" "$staged" "$caption" && return 0
+    echo "  · telegram failed, falling back to tmpfiles"
+  fi
+
   local named="$ROOT/.temp/$SLUG-$(date +%Y%m%d-%H%M%S).mp4"
   cp "$OUT" "$named"
   "$ROOT/scripts/tmpfiles" "$named"
