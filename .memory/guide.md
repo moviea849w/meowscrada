@@ -28,7 +28,7 @@ Guides and references for making YouTube videos.
 - [voiceover-guide.md](./voiceover-guide.md) — voiceover rules: Hindi audio, no technical words, on-screen text, tone
 - [obscura-guide.md](./obscura-guide.md) — render webpage backgrounds as 1080x1920 PNGs with Obscura
 - [takumi-guide.md](./takumi-guide.md) — Takumi card rendering (JSX → PNG, fonts, gotchas, unslop design rules)
-- [kino-guide.md](./kino-guide.md) — Kino: declarative JSON → MP4, plus Kino vs Takumi vs ffmpeg
+- [kino-guide.md](./kino-guide.md) — Kino: declarative JSON → MP4, plus Kino vs Takumi vs ffmpeg (installed, experimental — Takumi is the main pipeline)
 - [setup-guide.md](./setup-guide.md) — fresh machine setup: ffmpeg, fonts, Piper TTS, Obscura, shortcuts, verification
 
 ## Helper scripts

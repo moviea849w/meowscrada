@@ -13,7 +13,7 @@ Start here. This folder is the shared brain of the project — goals, tasks, don
 - [voiceover-guide.md](./voiceover-guide.md) — voiceover rules: Hindi audio, no technical words, numbers in English
 - [obscura-guide.md](./obscura-guide.md) — render webpage backgrounds as 1080x1920 PNGs
 - [takumi-guide.md](./takumi-guide.md) — Takumi card rendering (JSX → PNG)
-- [kino-guide.md](./kino-guide.md) — Kino JSON compositions → MP4
+- [kino-guide.md](./kino-guide.md) — Kino JSON → MP4 (installed, experimental; not the main pipeline)
 - [setup-guide.md](./setup-guide.md) — fresh machine setup (all tools + how to verify)
 
 ## Conventions

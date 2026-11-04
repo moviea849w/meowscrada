@@ -2,6 +2,8 @@
 
 **Kino** (`@glitchoff/kino`) compiles declarative **JSON compositions** into MP4 via FFmpeg. No React, no browser — just JSON scenes.
 
+> ⚠️ **Status: installed but not the main pipeline.** Kino draws positioned text and layers only — no rounded cards, borders, or icons — so its output looks plain next to the Takumi cards. We keep it installed for the "whole video as one JSON file" use case. Use `scripts/math-short.sh` for real videos.
+
 ## Install
 ```bash
 npm install @glitchoff/kino --ignore-scripts
