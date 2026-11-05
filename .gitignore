@@ -18,9 +18,12 @@ dist/
 *.mov
 
 # keep the shared asset library tracked
-!assets/clips/**
+# NOTE: assets/clips is NOT committed — footage is re-downloaded from pinned
+# Pexels ids in episodes/<slug>/clips.json (see the `stock` step). Keeps the repo
+# small and the render reproducible. credits.json stays for attribution.
 !assets/music/**
 !assets/sfx/**
+!assets/clips/**/credits.json
 !assets/art/**
 !assets/backgrounds/**
 !assets/fonts/**

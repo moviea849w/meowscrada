@@ -126,6 +126,7 @@ jobs:
         id: render-cache
         with:
           path: |
+            assets/clips/${{ github.event.inputs.episode || '003-never-sleep' }}
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/audio
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/stills
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/clips
@@ -147,6 +148,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: |
+            assets/clips/${{ github.event.inputs.episode || '003-never-sleep' }}
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/audio
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/stills
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/clips
