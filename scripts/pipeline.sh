@@ -128,6 +128,23 @@ scene_indices() {
 
 scene_json() { jq -c ".[$((10#$1 - 1))]" "$SCENES"; }
 
+# probe_duration FILE — prints the container duration, or fails with a clear message.
+# Missing/zero-byte or corrupt files are the usual CI failures; never let one pass
+# silently into a filter graph.
+probe_duration() {
+  local f="$1" d err
+  if [[ ! -s "$f" ]]; then
+    echo "  ✗ missing or empty: ${f#$ROOT/}" >&2
+    return 1
+  fi
+  d=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>&1)
+  if ! [[ "$d" =~ ^[0-9]+([.][0-9]+)?$ ]] || [[ "$d" == 0 ]]; then
+    echo "  ✗ unreadable duration in ${f#$ROOT/}: ${d:-<empty>}" >&2
+    return 1
+  fi
+  echo "$d"
+}
+
 # ------------------------------------------------------------------ steps
 
 step_art() {
@@ -264,10 +281,11 @@ step_still() {
 
 step_clip() {
   echo "▶ clip"
+  local failed=0
   for idx in $(scene_indices); do
     out="$WORK/clips/$idx.mp4"
     if [[ "$FORCE" -eq 0 && -s "$out" ]]; then echo "  · $idx cached"; continue; fi
-    [[ -s "$WORK/audio/$idx.wav" ]]  || { echo "  ✗ $idx — no audio (run: tts --scene $idx)"; continue; }
+    [[ -s "$WORK/audio/$idx.wav" ]]  || { echo "  ✗ $idx — no audio (run: tts --scene $idx)"; failed=$((failed + 1)); continue; }
 
     s=$(scene_json "$idx")
     motion=$(jq -r '.motion // "in"' <<<"$s")
@@ -283,7 +301,7 @@ step_clip() {
 
     if [[ -n "$footage" ]]; then
       src="$ROOT/assets/clips/$SLUG/$footage.mp4"
-      [[ -s "$src" ]] || { echo "  ✗ $idx — no footage $footage (run: stock-fetch)"; continue; }
+      [[ -s "$src" ]] || { echo "  ✗ $idx — no footage $footage (run: stock-fetch)"; failed=$((failed + 1)); continue; }
 
       # type overlay: rendered once per scene, composited over the moving footage
       ovl="$WORK/stills/$idx.ovl.png"
@@ -293,14 +311,19 @@ step_clip() {
            accent:(.accent // null), sub:(.sub // null), panel:$panel}
         ' <<<"$s" > "$WORK/overlay-$idx.json"
         node "$WORK/render-overlay.mjs" --spec "$WORK/overlay-$idx.json" --out "$ovl" --w "$W" --h "$H" >/dev/null 2>&1 \
-          || { echo "  ✗ $idx — overlay render failed"; continue; }
+          || { echo "  ✗ $idx — overlay render failed"; failed=$((failed + 1)); continue; }
       fi
 
       # loop the source if the narration runs longer than the clip; cover-crop to frame
-      ffmpeg -y -hide_banner -loglevel error \
+      if ! ffmpeg -y -hide_banner -loglevel error \
         -stream_loop -1 -i "$src" -i "$ovl" -t "$dur" \
         -filter_complex "[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=$FPS[bg];[bg][1:v]overlay=0:0:format=auto,format=yuv420p" \
         -an -c:v libx264 -preset veryfast -crf 19 "$out"
+      then
+        echo "  ✗ $idx — footage encode failed (footage:$footage)"; failed=$((failed + 1))
+        rm -f "$out"
+        continue
+      fi
       printf '  ✓ %s  %.1fs  [footage:%s]\n' "$idx" "$dur" "$footage"
       continue
     fi
@@ -315,11 +338,12 @@ step_clip() {
       ' <<<"$s" > "$WORK/frame-$idx.json"
       node "$WORK/render-frames.mjs" --spec "$WORK/frame-$idx.json" --outdir "$fdir" \
         --n "$nframes" --w "$W" --h "$H" >/dev/null 2>&1
-      "$ROOT/scripts/keyframes2clip.sh" "$fdir" "$dur" "$out" "$(jq -r '.animMode // "blend"' <<<"$s")" "$FPS" "$W" "$H"
+      "$ROOT/scripts/keyframes2clip.sh" "$fdir" "$dur" "$out" "$(jq -r '.animMode // "blend"' <<<"$s")" "$FPS" "$W" "$H" \
+        || { echo "  ✗ $idx — keyframe encode failed"; rm -f "$out"; failed=$((failed + 1)); continue; }
       continue
     fi
 
-    [[ -s "$WORK/stills/$idx.png" ]] || { echo "  ✗ $idx — no still (run: still --scene $idx)"; continue; }
+    [[ -s "$WORK/stills/$idx.png" ]] || { echo "  ✗ $idx — no still (run: still --scene $idx)"; failed=$((failed + 1)); continue; }
     # overscan so zoompan has room to move; scale on the larger axis
     over=$(python3 -c "print($W * 2 if $W > $H else $H * 2)")
     frames=$(python3 -c "print(int(round($dur*$FPS)))")
@@ -336,9 +360,14 @@ step_clip() {
     ffmpeg -y -hide_banner -loglevel error \
       -loop 1 -i "$WORK/stills/$idx.png" \
       -vf "scale=${over}:-2,zoompan=z='$z':x='$x':y='$y':d=$frames:s=${W}x${H}:fps=$FPS,format=yuv420p" \
-      -t "$dur" -r "$FPS" -c:v libx264 -preset veryfast -crf 18 "$out"
+      -t "$dur" -r "$FPS" -c:v libx264 -preset veryfast -crf 18 "$out" \
+      || { echo "  ✗ $idx — Ken Burns encode failed"; rm -f "$out"; failed=$((failed + 1)); continue; }
     printf '  ✓ %s  %.1fs\n' "$idx" "$dur"
   done
+  if [[ "$failed" -gt 0 ]]; then
+    echo "  ✗ $failed scene(s) failed to render"
+    return 1
+  fi
 }
 
 step_merge() {
@@ -355,6 +384,18 @@ step_merge() {
     echo "  · cached (use --force to redo)"; return 0
   fi
 
+  # Probe every clip up front and name the bad one. A clip with no readable
+  # duration used to raise KeyError inside the filter builder, leaving an empty
+  # filter file and a merge that "succeeded" with an empty video (CI, 2026-11-04).
+  local bad=0
+  for f in "${clips[@]}"; do
+    if ! probe_duration "$f" >/dev/null; then bad=$((bad + 1)); fi
+  done
+  if [[ "$bad" -gt 0 ]]; then
+    echo "  ✗ $bad clip(s) unreadable — re-run: pipeline.sh clip $SLUG --force"
+    return 1
+  fi
+
   local inputs=()
   for f in "${clips[@]}"; do inputs+=(-i "$f"); done
 
@@ -362,18 +403,24 @@ step_merge() {
   # the offset; if a short clip runs out, ffmpeg silently truncates the output.
   # So every input is first padded to its full slot length (clip + one crossfade),
   # which guarantees frames exist where the offset lands.
-  python3 - "$n" "$XFADE" "$WORK/clips" > "$WORK/merge-filter.txt" <<'PY'
+  python3 - "$XFADE" "$WORK/clips" "${clips[@]}" > "$WORK/merge-filter.txt" <<'PY' || return 1
 import sys, subprocess, json, os
-n, xf = int(sys.argv[1]), float(sys.argv[2])
-folder = sys.argv[3]
+xf = float(sys.argv[1])
+folder = sys.argv[2]
+paths = sys.argv[3:]
+n = len(paths)
 if n == 1:
     print("[0:v]copy[vout]"); sys.exit()
-durs = []
-for k in range(1, n + 1):
-    p = os.path.join(folder, f"{k:02d}.mp4")
-    out = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",p],
-                         capture_output=True, text=True).stdout
-    durs.append(float(json.loads(out)["format"]["duration"]))
+
+def duration(p):
+    r = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration",
+                        "-of","default=nw=1:nk=1",p], capture_output=True, text=True)
+    try:
+        return float(r.stdout.strip())
+    except ValueError:
+        sys.exit(f"  ✗ cannot read duration: {os.path.basename(p)} ({r.stderr.strip()[:200]})")
+
+durs = [duration(p) for p in paths]
 
 parts = []
 # pad each source so it can always supply frames through its crossfade
@@ -391,24 +438,25 @@ PY
 
   # exact merged length: sum of clips minus one crossfade per join
   local total
-  total=$(python3 - "$n" "$XFADE" "$WORK/clips" <<'PY'
-import sys, subprocess, json, os
-n, xf = int(sys.argv[1]), float(sys.argv[2])
-folder = sys.argv[3]
-s = 0.0
-for k in range(1, n + 1):
-    p = os.path.join(folder, f"{k:02d}.mp4")
-    out = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration","-of","json",p],
-                         capture_output=True, text=True).stdout
-    s += float(json.loads(out)["format"]["duration"])
-print(f"{s - (n - 1) * xf:.3f}")
-PY
-)
+  total=$(python3 -c '
+import sys
+xf = float(sys.argv[1]); d = [float(x) for x in sys.argv[2:]]
+print(f"{sum(d) - (len(d) - 1) * xf:.3f}")
+' "$XFADE" $(for f in "${clips[@]}"; do probe_duration "$f"; done))
+  [[ -n "$total" ]] || { echo "  ✗ could not compute merged length"; return 1; }
 
-  ffmpeg -y -hide_banner -loglevel error "${inputs[@]}" \
+  [[ -s "$WORK/merge-filter.txt" ]] || { echo "  ✗ empty filter graph"; return 1; }
+
+  if ! ffmpeg -y -hide_banner -loglevel error "${inputs[@]}" \
     -filter_complex_script "$WORK/merge-filter.txt" \
     -map "[vout]" -t "$total" -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "$WORK/video.mp4"
-  echo "  ✓ $WORK/video.mp4 (${total}s)"
+  then
+    echo "  ✗ merge failed (ffmpeg exit $?)"
+    rm -f "$WORK/video.mp4"
+    return 1
+  fi
+  [[ -s "$WORK/video.mp4" ]] || { echo "  ✗ merge wrote no video"; return 1; }
+  printf '  ✓ %s (%.1fs)\n' "$WORK/video.mp4" "$total"
 }
 
 step_audio() {
@@ -422,7 +470,10 @@ step_audio() {
     a="$WORK/audio/$(printf '%02d' "$k").wav"
     [[ -s "$a" ]] || { echo "  ✗ missing narration for scene $k"; return 1; }
     audio+=(-i "$a")
-    durs+=("$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/clips/$(printf '%02d' "$k").mp4")")
+    local cdur
+    cdur=$(probe_duration "$WORK/clips/$(printf '%02d' "$k").mp4") \
+      || { echo "  ✗ audio: clip $k unreadable"; return 1; }
+    durs+=("$cdur")
   done
 
   python3 - "$N_TOTAL" "$XFADE" "${durs[@]}" > "$WORK/audio-filter.txt" <<'PY'

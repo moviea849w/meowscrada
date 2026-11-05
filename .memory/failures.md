@@ -142,6 +142,42 @@ Kino's postinstall downloads its own ffmpeg from a dead GitHub URL (404).
 
 ---
 
+## 2026-11-05 — CI render died at merge with `KeyError: 'format'`
+
+**Symptom:** GitHub Actions run `41906098511` got through stock, TTS, 63 stills and
+clips, then:
+
+```
+▶ merge
+  KeyError: 'format'
+[AVFilterGraph] No filters specified in the graph description
+  ✓ .../video.mp4 (s)          ← empty duration, still reported success
+▶ audio
+  ✗ no merged video (run: merge)
+```
+
+**Cause:** the filter builder did `json.loads(out)["format"]["duration"]` with no
+error handling. One unreadable clip made Python raise, leaving `merge-filter.txt`
+empty; ffmpeg then failed with "No filters specified". The merge step never checked
+ffmpeg's exit code, so it printed `✓` and the failure surfaced one step later.
+The `clip` step had the same hole: failed encodes still printed `✓`.
+
+**Fix:**
+- `probe_duration()` in `pipeline.sh` — one probe path that names the file and the
+  ffprobe reason, rejects empty/zero-length results.
+- `merge` probes every clip first, aborts listing the count, and fails on a non-zero
+  ffmpeg exit instead of printing `✓`.
+- `clip` counts failed scenes and returns non-zero, so CI stops at the real cause.
+- `audio` uses `probe_duration` for clip durations.
+- `ci-render.sh` propagates a `stock-fetch.sh` failure.
+- Workflow caches `.temp/<slug>/{audio,stills,clips}` keyed on episode inputs, and
+  the npm cache key now includes `runner.os`.
+
+**Still open:** which clip was actually unreadable in CI. The local copies all probe
+fine, so it was produced during the run — the next run will name it in the log.
+
+---
+
 ## 2026-11-04 — Piper Hindi voice is flat
 
 **Status: accepted limitation, not a bug.**

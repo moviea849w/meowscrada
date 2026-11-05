@@ -103,7 +103,10 @@ for step in "${steps[@]}"; do
         if [[ -n "$(ls -A "$ROOT/assets/clips/$SLUG" 2>/dev/null | grep -v credits.json || true)" ]]; then
           echo "  · cached"
         else
-          "$ROOT/scripts/stock-fetch.sh" "$EP_DIR/clips.json" "$ROOT/assets/clips/$SLUG"
+          "$ROOT/scripts/stock-fetch.sh" "$EP_DIR/clips.json" "$ROOT/assets/clips/$SLUG" || {
+            echo "✗ step failed: stock"
+            exit 1
+          }
         fi
       fi
       ;;
