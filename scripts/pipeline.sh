@@ -511,9 +511,13 @@ PY
       && subs=1 && echo "  + subtitles (Hinglish)"
   fi
   if [[ "$subs" -eq 1 ]]; then
-    # keep captions below the title block; on 16:9 that's a fixed inset from the bottom
-    local fs=$(( W / 40 ))
-    local bottom=$(( H / 22 ))
+    # libass FontSize/MarginV are in ASS script units (PlayResY=288), not pixels,
+    # so a value computed from W/H renders ~3.75x too large on 1080p. Convert:
+    # pixels * 288 / H.
+    local fs_px=$(( H / 40 ))          # wanted cap size in pixels (48 at 1080p)
+    local bottom_px=$(( H / 22 ))      # gap from the bottom edge in pixels
+    local fs=$(( fs_px * 288 / H ))
+    local bottom=$(( bottom_px * 288 / H ))
     subvf="subtitles='${subfile}':force_style='FontName=Poppins,FontSize=${fs},Bold=1,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BorderStyle=3,Outline=2,Shadow=0,BackColour=&HB4000000,MarginV=${bottom},Alignment=2'"
   fi
 
