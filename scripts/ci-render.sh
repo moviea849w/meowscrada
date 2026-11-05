@@ -111,7 +111,7 @@ for step in "${steps[@]}"; do
 
   case "$step" in
     stock)
-      local missing=0
+      missing=0
       if [[ -f "$EP_DIR/clips.json" ]]; then
         echo "▶ stock"
         # cached only if every key in clips.json has a file on disk — credits.json
