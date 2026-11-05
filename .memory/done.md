@@ -19,9 +19,15 @@
 - 2026-11-04: Initial setup; quiz-short experiments; Takumi + Poppins + unslop design pass.
 - 2026-11-04: Kino installed but judged experimental (plain output). Takumi is the main rasterizer.
 - 2026-11-04: **Concept pivot** — curiosity explainers, long-form + shorts. Episode 1 "Why Was Being a Medieval King So Dangerous?" built end to end.
+- 2026-11-04: Episode 003 (what-if: never sleep) built: stock footage, 2D keyframes, Hinglish subs, CI render + Telegram delivery.
+- 2026-11-05: **CI fixed and green.** Episode 003 rendered on GitHub Actions end to end
+  (221 s, 31 MB) and delivered to Telegram in ~3 min with caches warm.
+- 2026-11-05: Skills — imported 5 (explainer-video, diagram-animation, whiteboard-animation,
+  editing-videos, video-structure-analyzer), added `roughjs`, rewrote `ffmpeg` for this pipeline.
+- 2026-11-05: **Episode 003 render deleted on purpose** — starting a new video. Episode files kept.
 
 ## Next
-- [ ] **Revisit the concept** — user judged Episode 1's concept "not good". Needs a rethink before more episodes.
+- [ ] **Start the new video** (user's call: "we will start new")
 - [ ] Fix `split` template headline wrapping (scene 11 orphaned "in")
 - [ ] Natural Hindi voice: Piper is flat; needs cloud TTS or a bigger machine
 - [ ] Cut 3–5 shorts from Episode 1
