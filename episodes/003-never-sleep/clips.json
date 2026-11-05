@@ -8,5 +8,7 @@
   { "key": "hospital",     "query": "hospital room empty bed",       "duration": 6 },
   { "key": "rat-lab",      "query": "laboratory mouse rat research", "duration": 5 },
   { "key": "sleep-lab",    "query": "medical monitor screen vital",  "duration": 5 },
-  { "key": "city-night",   "query": "city lights night timelapse",   "duration": 6 }
+  { "key": "city-night",   "query": "city lights night timelapse",   "duration": 6 },
+  { "key": "insomnia",     "query": "person awake in bed at night",  "duration": 6 },
+  { "key": "rocking-chair", "query": "empty rocking chair dark room", "duration": 5 }
 ]

@@ -70,6 +70,19 @@ if [[ ! -x "$ROOT/scripts/tts" ]]; then
   exit 1
 fi
 
+# preflight: every "footage" key a scene uses must exist in clips.json, otherwise
+# stock-fetch can never download it and the clip step fails 60 scenes in.
+if [[ -f "$EP_DIR/scenes.json" && -f "$EP_DIR/clips.json" ]]; then
+  declared=$(jq -r '.[].key' "$EP_DIR/clips.json" | sort -u)
+  used=$(jq -r '.[] | select(.footage) | .footage' "$EP_DIR/scenes.json" | sort -u)
+  undefined=$(comm -23 <(printf '%s\n' "$used") <(printf '%s\n' "$declared") | tr '\n' ' ')
+  if [[ -n "${undefined// /}" ]]; then
+    echo "✗ scenes use footage with no clips.json entry: $undefined"
+    echo "  add them to episodes/$SLUG/clips.json, or the clip step will fail"
+    exit 1
+  fi
+fi
+
 # fail fast: a missing voice engine otherwise shows up as 60 silent ✗ lines
 if ! command -v piper >/dev/null 2>&1; then
   echo "✗ piper not on PATH — text to speech cannot run"
@@ -98,12 +111,12 @@ for step in "${steps[@]}"; do
 
   case "$step" in
     stock)
+      local missing=0
       if [[ -f "$EP_DIR/clips.json" ]]; then
         echo "▶ stock"
         # cached only if every key in clips.json has a file on disk — credits.json
         # alone does not mean the footage is there (it was never committed until
         # 2026-11-05, so CI skipped the fetch and scenes silently lost footage).
-        local missing=0
         while IFS= read -r key; do
           [[ -s "$ROOT/assets/clips/$SLUG/$key.mp4" ]] || missing=$((missing + 1))
         done < <(jq -r '.[].key' "$EP_DIR/clips.json")
