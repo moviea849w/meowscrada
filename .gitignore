@@ -27,5 +27,6 @@ dist/
 !assets/art/**
 !assets/backgrounds/**
 !assets/fonts/**
+!assets/svg/**
 
 .env
