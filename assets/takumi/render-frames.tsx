@@ -10,6 +10,11 @@
 //   { "template": "anim", "animate": "adenosine", "kicker": "...", "text": "...",
 //     "accent": "...", "sub": "...", "panel": "3" }
 //
+// Two kinds of animated scene:
+//   · built-in  — "animate": "<name>" from assets/takumi/animate.tsx (18 keyframes)
+//   · Earth/SVG — "animate": "<name>" registered in assets/svg/earth.tsx, drawn as
+//                 a full-frame 1600x900 SVG scene that is pure function of t
+//
 // Output: <outdir>/000.png ... <outdir>/(n-1).png  (1080x1920 or 1920x1080 per --w/--h)
 
 import { render } from "takumi-js";
@@ -17,6 +22,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { renderAnimated } from "./storyboard-templates.tsx";
+import { renderSvgScene, isSvgScene } from "./render-svg-scene.tsx";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -38,52 +44,45 @@ async function findRoot(start) {
 const ROOT = await findRoot(HERE);
 const FONT_DIR = join(ROOT, "assets", "fonts");
 
-const args = process.argv.slice(2);
+// args
+const argv = process.argv.slice(2);
 const arg = (name, fallback) => {
-  const i = args.indexOf(`--${name}`);
-  return i >= 0 ? args[i + 1] : fallback;
+  const i = argv.indexOf(`--${name}`);
+  return i >= 0 ? argv[i + 1] : fallback;
 };
+const specPath = arg("spec");
+const outdir = arg("outdir", "frames");
+const n = Number(arg("n", 18));
+const W = Number(arg("w", 1920));
+const H = Number(arg("h", 1080));
 
-const spec = JSON.parse(await readFile(arg("spec", "frame.json"), "utf8"));
-const OUTDIR = arg("outdir", "frames");
-const N = parseInt(arg("n", "24"), 10);
-const WIDTH = parseInt(arg("w", "1920"), 10);
-const HEIGHT = parseInt(arg("h", "1080"), 10);
+const spec = JSON.parse(await readFile(specPath, "utf8"));
+await mkdir(outdir, { recursive: true });
 
-await mkdir(OUTDIR, { recursive: true });
-
+// takumi wants font *data*, not a path — passing a path throws ERR_INVALID_URL
 const font = async (file, weight) => ({
   name: "Poppins",
   data: await readFile(join(FONT_DIR, file)),
   weight,
   style: "normal",
 });
-
 const fonts = [
   await font("Poppins-SemiBold.ttf", 600),
   await font("Poppins-Bold.ttf", 700),
   await font("Poppins-ExtraBold.ttf", 800),
 ];
 
-const C = {
-  paper: "#f4ede1",
-  ink: "#1d1a16",
-  inkDim: "#6f6659",
-  accent: "#c8452a",
-  accentSoft: "#e8a08f",
-};
-
-// landscape episodes use the dark documentary palette; vertical uses paper
-const landscape = WIDTH > HEIGHT;
-const PAL = landscape
-  ? { paper: "#0b0a09", ink: "#f5f2ea", inkDim: "#b9b3a5", accent: "#d8a54a", accentSoft: "#8a6a2a" }
-  : C;
-
-for (let i = 0; i < N; i++) {
-  const t = N === 1 ? 1 : i / (N - 1);
-  const node = renderAnimated(spec, PAL, t, WIDTH, HEIGHT);
-  const png = await render(node, { width: WIDTH, height: HEIGHT, format: "png", fonts });
-  await writeFile(join(OUTDIR, `${String(i).padStart(3, "0")}.png`), png);
+const svgScene = isSvgScene(spec.animate);
+if (spec.animate && !svgScene && !renderAnimated(spec, 0, { w: W, h: H })) {
+  console.error(`  ✗ unknown animation "${spec.animate}"`);
+  process.exit(1);
 }
 
-console.log(`✓ ${OUTDIR} (${N} frames)`);
+for (let i = 0; i < n; i++) {
+  const t = n === 1 ? 0 : i / (n - 1);
+  const element = svgScene
+    ? renderSvgScene(spec.animate, t, { w: W, h: H })
+    : renderAnimated(spec, t, { w: W, h: H });
+  const png = await render(element, { width: W, height: H, fonts });
+  await writeFile(join(outdir, `${String(i).padStart(3, "0")}.png`), png);
+}

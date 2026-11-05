@@ -13,18 +13,17 @@
 // Coordinate space is 1600x900 (16:9), globe centred, fitted with 40px margin.
 
 import { geoNaturalEarth1, geoPath, geoGraticule10, geoOrthographic, geoDistance } from "d3-geo";
-import { feature } from "topojson-client";
-import type { Topology, GeometryCollection } from "topojson-specification";
-import world from "world-atlas/countries-110m.json" with { type: "json" };
+import { featureCollection, type Topology } from "./topo.ts";
+import world from "./data/world-110m.json" with { type: "json" };
 
 export const W = 1600;
 export const H = 900;
 const MARGIN = 40;
 
-const topo = world as unknown as Topology<{ countries: GeometryCollection; land: GeometryCollection }>;
+const topo = world as unknown as Topology;
 
-export const LAND = feature(topo, topo.objects.land);
-export const COUNTRIES = feature(topo, topo.objects.countries);
+export const LAND = featureCollection(topo, topo.objects.land);
+export const COUNTRIES = featureCollection(topo, topo.objects.countries);
 
 // fitted equirectangular-ish projection (Natural Earth 1)
 const projection = geoNaturalEarth1().fitExtent(

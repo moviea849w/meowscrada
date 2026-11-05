@@ -1,0 +1,72 @@
+[
+  {
+    "template": "anim",
+    "animate": "earth-spin",
+    "frames": 36,
+    "say": "एक सवाल। अगर धरती घूमना बंद कर दे, तो क्या होगा?",
+    "sub": "Ek sawaal. Agar dharti ghoomna band kar de, toh kya hoga?"
+  },
+  {
+    "template": "anim",
+    "animate": "earth-spin-wide",
+    "frames": 30,
+    "say": "अभी, आप जहाँ खड़े हैं, धरती आपको पूरब की ओर ले जा रही है।",
+    "sub": "Abhi, aap jahan khade hain, dharti aapko purab ki ore le ja rahi hai."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-brake",
+    "frames": 36,
+    "say": "भूमध्य रेखा पर रफ़्तार सत्रह सौ किलोमीटर प्रति घंटा। पूरब की ओर।",
+    "sub": "Bhūmadhya rekha par raftaar 1,670 km/h. purab ki ore."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-fling",
+    "frames": 36,
+    "say": "तो लोग सोचते हैं हम सब उड़ जाएँगे। उड़ेंगे नहीं। गुरुत्वाकर्षण ज़्यादा ताक़तवर है।",
+    "sub": "Toh log sochte hain hum sab ud jayenge. Udenge nahi. Gurutvakarshan zyada taqatwar hai."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-weather",
+    "frames": 36,
+    "say": "लेकिन हवा नहीं रुकेगी। वो सत्रह सौ किलोमीटर प्रति घंटे से चलती रहेगी।",
+    "sub": "Lekin hawa nahi rukegi. Wo 1,670 km/h se chalti rahegi."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-day-year",
+    "frames": 36,
+    "say": "और एक दिन पूरे साल का हो जाएगा। छह महीने धूप, छह महीने रात।",
+    "sub": "Aur ek din poore saal ka ho jayega. 6 mahine dhoop, 6 mahine raat."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-ocean-poles",
+    "frames": 36,
+    "say": "समुद्र भूमध्य रेखा छोड़कर ध्रुवों पर जमा हो जाएगा। बीच में सूखी ज़मीन।",
+    "sub": "Samudra Bhūmadhya rekha chhodkar dhruvon par jama ho jayega. Beech mein sookhi zameen."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-fire-ice",
+    "frames": 30,
+    "say": "एक तरफ़ हमेशा दिन, दूसरी तरफ़ हमेशा रात।",
+    "sub": "Ek taraf hamesha din, doosri taraf hamesha raat."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-numbers",
+    "frames": 36,
+    "say": "और अच्छी खबर: ये कभी होने वाला नहीं है।",
+    "sub": "Aur achhi khabar: ye kabhi hone wala nahi hai."
+  },
+  {
+    "template": "anim",
+    "animate": "earth-callback",
+    "frames": 30,
+    "say": "धरती तब भी घूम रही होगी। बस थोड़ी धीमी।",
+    "sub": "Dharti tab bhi ghoom rahi hogi. Bas thodi dheemi."
+  }
+]
