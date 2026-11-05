@@ -100,9 +100,17 @@ for step in "${steps[@]}"; do
     stock)
       if [[ -f "$EP_DIR/clips.json" ]]; then
         echo "▶ stock"
-        if [[ -n "$(ls -A "$ROOT/assets/clips/$SLUG" 2>/dev/null | grep -v credits.json || true)" ]]; then
+        # cached only if every key in clips.json has a file on disk — credits.json
+        # alone does not mean the footage is there (it was never committed until
+        # 2026-11-05, so CI skipped the fetch and scenes silently lost footage).
+        local missing=0
+        while IFS= read -r key; do
+          [[ -s "$ROOT/assets/clips/$SLUG/$key.mp4" ]] || missing=$((missing + 1))
+        done < <(jq -r '.[].key' "$EP_DIR/clips.json")
+        if [[ "$missing" -eq 0 ]]; then
           echo "  · cached"
         else
+          echo "  · $missing clip(s) missing — fetching"
           "$ROOT/scripts/stock-fetch.sh" "$EP_DIR/clips.json" "$ROOT/assets/clips/$SLUG" || {
             echo "✗ step failed: stock"
             exit 1

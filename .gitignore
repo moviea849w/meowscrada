@@ -18,6 +18,7 @@ dist/
 *.mov
 
 # keep the shared asset library tracked
+!assets/clips/**
 !assets/music/**
 !assets/sfx/**
 !assets/art/**
