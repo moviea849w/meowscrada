@@ -159,6 +159,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: video-${{ github.event.inputs.episode || '003-never-sleep' }}
+          # .temp is a dot-directory; upload-artifact skips hidden paths unless
+          # include-hidden-files is set, which is why the first successful run
+          # reported "No files were found" despite final.mp4 existing.
           path: .temp/*/final.mp4
+          include-hidden-files: true
           if-no-files-found: warn
           retention-days: 7
