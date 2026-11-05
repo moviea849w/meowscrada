@@ -64,8 +64,11 @@ jobs:
           ffmpeg -version | head -1
           node -v
 
-      - name: Node dependencies
-        uses: actions/cache@v4
+      # Caches are split into restore/save so they are written even when the render
+      # fails. A plain actions/cache@v4 only saves on success, so a failing pipeline
+      # could never populate its own cache and every retry paid the full install cost.
+      - name: Restore node_modules
+        uses: actions/cache/restore@v4
         id: npm-cache
         with:
           path: node_modules
@@ -80,6 +83,13 @@ jobs:
           sudo apt-get install -y -qq libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
           npm ci --no-audit --no-fund --ignore-scripts || npm install --no-audit --no-fund --ignore-scripts
 
+      - name: Save node_modules
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Piper (text to speech)
         run: |
           pip install --quiet piper-tts
@@ -90,8 +100,9 @@ jobs:
           command -v piper || { echo "::error::piper not installed"; exit 1; }
           piper --help >/dev/null 2>&1 && echo "piper OK" || { echo "::error::piper broken"; exit 1; }
 
-      - name: Cache voice models
-        uses: actions/cache@v4
+      - name: Restore voice models
+        uses: actions/cache/restore@v4
+        id: voice-cache
         with:
           path: ~/.local/share/piper-voices
           key: piper-voices-v1
@@ -99,11 +110,20 @@ jobs:
       - name: Fetch voice models
         run: ./scripts/voice-fetch.sh
 
+      - name: Save voice models
+        if: steps.voice-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.local/share/piper-voices
+          key: piper-voices-v1
+
       # Rendering intermediates are the expensive part: TTS, stills and 60+ clips.
       # Keyed on the episode inputs, so a re-run after a one-line fix resumes
-      # instead of rebuilding everything from zero.
-      - name: Cache render intermediates
-        uses: actions/cache@v4
+      # instead of rebuilding everything from zero. Saved even on failure so a
+      # broken merge does not cost another 2 minutes of rendering.
+      - name: Restore render intermediates
+        uses: actions/cache/restore@v4
+        id: render-cache
         with:
           path: |
             .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/audio
@@ -121,6 +141,16 @@ jobs:
           ARGS="--from ${{ github.event.inputs.from || 'stock' }} --to ${{ github.event.inputs.to || 'upload' }}"
           if [ "${{ github.event.inputs.send }}" = "false" ]; then ARGS="$ARGS --no-send"; fi
           ./scripts/ci-render.sh "${{ github.event.inputs.episode || '003-never-sleep' }}" $ARGS
+
+      - name: Save render intermediates
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/audio
+            .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/stills
+            .temp/${{ github.event.inputs.episode || '003-never-sleep' }}/clips
+          key: render-${{ github.event.inputs.episode || '003-never-sleep' }}-${{ hashFiles('episodes/**', 'assets/takumi/**', 'scripts/pipeline.sh') }}
 
       - name: Upload artifact
         if: always()

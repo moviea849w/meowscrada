@@ -447,11 +447,14 @@ print(f"{sum(d) - (len(d) - 1) * xf:.3f}")
 
   [[ -s "$WORK/merge-filter.txt" ]] || { echo "  ✗ empty filter graph"; return 1; }
 
-  if ! ffmpeg -y -hide_banner -loglevel error "${inputs[@]}" \
+  local rc=0
+  ffmpeg -y -hide_banner -loglevel error "${inputs[@]}" \
     -filter_complex_script "$WORK/merge-filter.txt" \
-    -map "[vout]" -t "$total" -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "$WORK/video.mp4"
-  then
-    echo "  ✗ merge failed (ffmpeg exit $?)"
+    -map "[vout]" -t "$total" -c:v libx264 -preset veryfast -crf 19 -pix_fmt yuv420p "$WORK/video.mp4" \
+    || rc=$?
+  if [[ "$rc" -ne 0 ]]; then
+    echo "  ✗ merge failed (ffmpeg exit $rc)"
+    echo "    filter: $WORK/merge-filter.txt  clips: $WORK/clips"
     rm -f "$WORK/video.mp4"
     return 1
   fi
