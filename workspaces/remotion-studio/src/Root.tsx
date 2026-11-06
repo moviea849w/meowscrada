@@ -10,7 +10,7 @@ import { Composition, registerRoot } from "remotion";
 import { BridgeShort, BRIDGE_FRAMES } from "./videos/bridge/Bridge";
 import { GlProbe, PROBE_FRAMES } from "./videos/probe/GlProbe";
 
-const Root: React.FC = () => (
+export const Root: React.FC = () => (
   <>
     <Composition
       id="BridgeShort"
@@ -31,4 +31,4 @@ const Root: React.FC = () => (
   </>
 );
 
-registerRoot(Root);
+

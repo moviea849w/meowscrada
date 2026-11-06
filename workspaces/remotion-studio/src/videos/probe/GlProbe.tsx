@@ -11,32 +11,25 @@ import * as THREE from "three";
 import { AbsoluteFill, useCurrentFrame, staticFile } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
-import { Pen, bodyFront, KID } from "../videos/bridge/toon";
+import { Pen, bodyFront, KID } from "../bridge/toon";
 
 export const PROBE_FRAMES = 30;
-
-const card = (() => {
-  let cv: HTMLCanvasElement | null = null;
-  return () => {
-    if (cv) return cv;
-    cv = document.createElement("canvas");
-    cv.width = 600; cv.height = 1000;
-    const g = cv.getContext("2d")!;
-    bodyFront(new Pen(g), KID, { mode: "stand", wave: 0.6, seed: 3, expr: "happy" });
-    return cv;
-  };
-})();
 
 const Inner: React.FC = () => {
   const f = useCurrentFrame();
   const { gl, scene, camera } = useThree();
-  const [tex] = React.useState(() => new THREE.CanvasTexture(card()));
   React.useEffect(() => {
-    const dbg = (gl.getExtension("WEBGL_debug_renderer_info") as { UNMASKED_RENDERER_WEBGL: number } | null);
-    const name = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-    console.log(`[gl-probe] renderer=${name} version=${gl.getParameter(gl.VERSION)}`);
+    const r = (gl as unknown as { getContext?: () => WebGLRenderingContext | WebGL2RenderingContext }).getContext?.() ?? (gl as unknown as WebGLRenderingContext);
+    const dbg = r?.getExtension?.("WEBGL_debug_renderer_info") as { UNMASKED_RENDERER_WEBGL: number } | null | undefined;
+    const name = dbg ? r.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : r?.getParameter?.(r.RENDERER);
+    console.log(`[gl-probe] renderer=${name} version=${r?.getParameter?.(r.VERSION)}`);
   }, [gl]);
   React.useEffect(() => {
+    const cv = document.createElement("canvas");
+    cv.width = 600; cv.height = 1000;
+    bodyFront(new Pen(cv.getContext("2d")!), KID, { mode: "stand", wave: 0.6, seed: 3, expr: "happy" });
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
     scene.background = new THREE.Color("#0b1330");
     scene.fog = new THREE.Fog("#0b1330", 30, 120);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshLambertMaterial({ color: "#2f6b4f" }));
@@ -56,7 +49,7 @@ const Inner: React.FC = () => {
     sun.position.set(10, 20, 12);
     sun.castShadow = true;
     scene.add(sun);
-  }, [scene, tex]);
+  }, [scene]);
   const cam = camera as THREE.PerspectiveCamera;
   cam.position.set(0 + f * 0.02, 2.4, 9);
   cam.lookAt(0, 2.6, 0);
