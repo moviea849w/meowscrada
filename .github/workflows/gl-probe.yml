@@ -52,42 +52,42 @@ jobs:
             echo "looked for: $GITHUB_WORKSPACE/$SRC and $GITHUB_WORKSPACE/../$SRC"
             exit 1
           fi
-          DST="$GITHUB_WORKSPACE/../remotion-studio"
+          DST="$GITHUB_WORKSPACE/remotion-studio"
           mkdir -p "$DST" "$TMPDIR"
           cp -a "$SRC_ABS"/. "$DST"/
           echo "REMOTION_DIR=$DST" >> "$GITHUB_ENV"
           ls "$DST/src/videos"
 
       - name: Node dependencies
-        working-directory: ${{ github.workspace }}/../remotion-studio
+        working-directory: ${{ github.workspace }}/remotion-studio
         run: |
           npm install --no-audit --no-fund --ignore-scripts
           node -e "console.log('node', process.version)"
 
       - name: Install Chrome + system libs for WebGL
-        working-directory: ${{ github.workspace }}/../remotion-studio
+        working-directory: ${{ github.workspace }}/remotion-studio
         run: |
           npx remotion browser ensure
           # swiftshader needs these; they are present on ubuntu-latest but assert it
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libgl1 libegl1 libglu1-mesa libxi6 libxext6 libxrandr2 libgbm1 || true
+          sudo apt-get install -y -qq libgl1 libegl1 libglu1-mesa libxi6 libxext6 libxrandr2 libgbm1 ffmpeg jq || true
           ls -d ~/.cache/remotion/* 2>/dev/null || true
 
       - name: Typecheck
-        working-directory: ${{ github.workspace }}/../remotion-studio
+        working-directory: ${{ github.workspace }}/remotion-studio
         run: npx tsc --noEmit 2>&1 | grep -v "node_modules" | head -40 || true
 
       - name: Render probe frames
-        working-directory: ${{ github.workspace }}/../remotion-studio
+        working-directory: ${{ github.workspace }}/remotion-studio
         run: |
           mkdir -p out/probe
           # a still first: 1 frame proves the browser, the GL context and the bundle
-          npx remotion still src/index.ts GlProbe out/probe/still.png --frame=15 --scale=0.5 2>&1 | tee out/probe/still.log
+          npx remotion still src/index.ts GlProbe out/probe/still.png --frame 15 --scale 0.5 2>&1 | tee out/probe/still.log
           grep -o "\[gl-probe\].*" out/probe/still.log || echo "::warning::no [gl-probe] renderer line in the log"
-          npx remotion render src/index.ts GlProbe out/probe/probe.mp4 --codec h264 --crf 20 --scale=0.5 2>&1 | tee out/probe/render.log
+          npx remotion render src/index.ts GlProbe out/probe/probe.mp4 --codec h264 --crf 20 --scale 0.5 2>&1 | tee out/probe/render.log
 
       - name: Check the frames are real
-        working-directory: ${{ github.workspace }}/../remotion-studio
+        working-directory: ${{ github.workspace }}/remotion-studio
         run: |
           python3 - <<'PY'
           import subprocess, statistics, sys
@@ -118,7 +118,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gl-probe
-          path: ${{ github.workspace }}/../remotion-studio/out/probe/
-          include-hidden-files: true
+          path: remotion-studio/out/probe/
           if-no-files-found: warn
           retention-days: 7

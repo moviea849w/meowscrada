@@ -24,11 +24,11 @@ tmpfiles out.mp4
 | File | What it is |
 |---|---|
 | `.memory/index.md` | Start here — index of everything |
+| `.memory/access.md` | Tokens/keys location + how to trigger CI (never commit them) |
 | `.memory/goal.md` | The goal: curiosity explainers, long + short |
 | `.memory/done.md` | Completed work log |
 | `.memory/tickets/` | Open tasks |
-| `.memory/guide.md` | Reference guides index |
-| `.memory/longform-guide.md` | **Long-form pipeline** — episode shape, script format, rendering |
+| `.memory/guide.md` | Reference guides index || `.memory/longform-guide.md` | **Long-form pipeline** — episode shape, script format, rendering |
 | `.memory/assets-guide.md` | **Asset library** — art/music/SFX fetch, licenses, credits |
 | `.memory/voiceover-guide.md` | Voiceover rules (Hindi, numbers in English) |
 | `.memory/takumi-guide.md` | Takumi card rendering |

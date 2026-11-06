@@ -4,6 +4,7 @@ Start here. This folder is the shared brain of the project — goals, tasks, don
 
 ## Start here
 1. [constraints.md](./constraints.md) — **hard limits of this machine — read before proposing anything**
+2. [access.md](./access.md) — **tokens, keys, how to trigger CI** (never commit them)
 2. [concept.md](./concept.md) — **current concept direction** (funny what-ifs; ACTIVE)
 3. [goal.md](./goal.md) — what we're building (curiosity explainers, long-form + shorts)
 4. [tickets/](./tickets/) — what's open right now
