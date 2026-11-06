@@ -1,0 +1,72 @@
+// GL probe — the smallest possible three.js scene that still proves a real WebGL
+// render happened: gradient sky, lit ground, a sphere with a directional light,
+// and one 2D cartoon card from the bridge cast. If this comes back blank or
+// black on a runner, 3D is impossible there; if it comes back with a lit sphere,
+// the cartoon-3d-short pipeline can render on that runner.
+//
+// Rendered by .github/workflows/gl-probe.yml, which reports which GL renderer
+// the browser actually got (swiftshader / llvmpipe / hardware) in the log.
+import React from "react";
+import * as THREE from "three";
+import { AbsoluteFill, useCurrentFrame, staticFile } from "remotion";
+import { ThreeCanvas } from "@remotion/three";
+import { useThree } from "@react-three/fiber";
+import { Pen, bodyFront, KID } from "../videos/bridge/toon";
+
+export const PROBE_FRAMES = 30;
+
+const card = (() => {
+  let cv: HTMLCanvasElement | null = null;
+  return () => {
+    if (cv) return cv;
+    cv = document.createElement("canvas");
+    cv.width = 600; cv.height = 1000;
+    const g = cv.getContext("2d")!;
+    bodyFront(new Pen(g), KID, { mode: "stand", wave: 0.6, seed: 3, expr: "happy" });
+    return cv;
+  };
+})();
+
+const Inner: React.FC = () => {
+  const f = useCurrentFrame();
+  const { gl, scene, camera } = useThree();
+  const [tex] = React.useState(() => new THREE.CanvasTexture(card()));
+  React.useEffect(() => {
+    const dbg = (gl.getExtension("WEBGL_debug_renderer_info") as { UNMASKED_RENDERER_WEBGL: number } | null);
+    const name = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    console.log(`[gl-probe] renderer=${name} version=${gl.getParameter(gl.VERSION)}`);
+  }, [gl]);
+  React.useEffect(() => {
+    scene.background = new THREE.Color("#0b1330");
+    scene.fog = new THREE.Fog("#0b1330", 30, 120);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshLambertMaterial({ color: "#2f6b4f" }));
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+    const moon = new THREE.Mesh(new THREE.SphereGeometry(6, 48, 32), new THREE.MeshLambertMaterial({ color: "#f2e9cf" }));
+    moon.position.set(18, 22, -40);
+    scene.add(moon);
+    const post = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 2), new THREE.MeshLambertMaterial({ color: "#8c3b4a" }));
+    post.position.set(-6, 3, -10);
+    scene.add(post);
+    const kid = new THREE.Mesh(new THREE.PlaneGeometry(2.16, 3.6), new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.5, side: THREE.DoubleSide }));
+    kid.position.set(0, 1.8, 0);
+    scene.add(kid);
+    scene.add(new THREE.HemisphereLight("#dcecff", "#2a4a3a", 0.6));
+    const sun = new THREE.DirectionalLight("#fff3e0", 2.8);
+    sun.position.set(10, 20, 12);
+    sun.castShadow = true;
+    scene.add(sun);
+  }, [scene, tex]);
+  const cam = camera as THREE.PerspectiveCamera;
+  cam.position.set(0 + f * 0.02, 2.4, 9);
+  cam.lookAt(0, 2.6, 0);
+  return null;
+};
+
+export const GlProbe: React.FC = () => (
+  <AbsoluteFill style={{ background: "#0b1330" }}>
+    <ThreeCanvas width={1080} height={1920} shadows camera={{ fov: 40, near: 0.2, far: 500 }}>
+      <Inner />
+    </ThreeCanvas>
+  </AbsoluteFill>
+);

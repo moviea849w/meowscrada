@@ -1,0 +1,124 @@
+name: GL probe (3D)
+
+# Does three.js actually render on a GitHub-hosted runner?
+#
+# The 2-core Codespace has no working GPU process (see .memory/failures.md), so 3D
+# has never been rendered anywhere. This workflow renders a 30-frame three.js probe
+# on ubuntu-latest, reports the real WebGL renderer string, and checks the frames
+# are not blank — the answer decides whether cartoon-3d-short can be produced here.
+#
+# The Remotion project (three.js + Remotion) is mirrored into this repo at
+# workspaces/remotion-studio so a runner can build it; node_modules is excluded.
+#
+#   gh workflow run gl-probe.yml
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Remotion project to copy in (repo:path or absolute)"
+        required: false
+        default: "workspaces/remotion-studio"
+        type: string
+
+concurrency:
+  group: gl-probe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Remotion copies the bundle into TMPDIR and never cleans it up; keep it in
+      # the workspace so it cannot fill the runner's system disk.
+      TMPDIR: ${{ github.workspace }}/remotion-tmp
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy Remotion project
+        run: |
+          SRC="${{ github.event.inputs.project || 'workspaces/remotion-studio' }}"
+          if [ -d "$SRC" ]; then
+            # inside the checkout: the path is repo-relative
+            SRC_ABS="$GITHUB_WORKSPACE/$SRC"
+          elif [ -d "$GITHUB_WORKSPACE/../$SRC" ]; then
+            # outside the checkout: actions/checkout keeps the sibling folder
+            SRC_ABS="$GITHUB_WORKSPACE/../$SRC"
+          else
+            echo "::error::no Remotion project at '$SRC' — commit it to the repo or pass a path"
+            echo "looked for: $GITHUB_WORKSPACE/$SRC and $GITHUB_WORKSPACE/../$SRC"
+            exit 1
+          fi
+          DST="$GITHUB_WORKSPACE/../remotion-studio"
+          mkdir -p "$DST" "$TMPDIR"
+          cp -a "$SRC_ABS"/. "$DST"/
+          echo "REMOTION_DIR=$DST" >> "$GITHUB_ENV"
+          ls "$DST/src/videos"
+
+      - name: Node dependencies
+        working-directory: ${{ github.workspace }}/../remotion-studio
+        run: |
+          npm install --no-audit --no-fund --ignore-scripts
+          node -e "console.log('node', process.version)"
+
+      - name: Install Chrome + system libs for WebGL
+        working-directory: ${{ github.workspace }}/../remotion-studio
+        run: |
+          npx remotion browser ensure
+          # swiftshader needs these; they are present on ubuntu-latest but assert it
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgl1 libegl1 libglu1-mesa libxi6 libxext6 libxrandr2 libgbm1 || true
+          ls -d ~/.cache/remotion/* 2>/dev/null || true
+
+      - name: Typecheck
+        working-directory: ${{ github.workspace }}/../remotion-studio
+        run: npx tsc --noEmit 2>&1 | grep -v "node_modules" | head -40 || true
+
+      - name: Render probe frames
+        working-directory: ${{ github.workspace }}/../remotion-studio
+        run: |
+          mkdir -p out/probe
+          # a still first: 1 frame proves the browser, the GL context and the bundle
+          npx remotion still src/index.ts GlProbe out/probe/still.png --frame=15 --scale=0.5 2>&1 | tee out/probe/still.log
+          grep -o "\[gl-probe\].*" out/probe/still.log || echo "::warning::no [gl-probe] renderer line in the log"
+          npx remotion render src/index.ts GlProbe out/probe/probe.mp4 --codec h264 --crf 20 --scale=0.5 2>&1 | tee out/probe/render.log
+
+      - name: Check the frames are real
+        working-directory: ${{ github.workspace }}/../remotion-studio
+        run: |
+          python3 - <<'PY'
+          import subprocess, statistics, sys
+          f = "out/probe/probe.mp4"
+          w, h = 540, 960
+          raw = subprocess.run(["ffmpeg", "-v", "error", "-i", f, "-vf", f"scale={w}:{h},format=gray",
+                                "-f", "rawvideo", "-"], capture_output=True).stdout
+          n = len(raw) // (w * h)
+          print(f"frames={n}")
+          if n == 0:
+              sys.exit("no frames decoded")
+          means, stds = [], []
+          for i in range(n):
+              px = raw[i * w * h:(i + 1) * w * h]
+              means.append(statistics.mean(px) / 255)
+              stds.append(statistics.pstdev(px) / 255)
+          print(f"luma mean={statistics.mean(means):.3f}  std={statistics.mean(stds):.3f}")
+          # the probe is a dark sky over a lit ground and a bright moon: expect mid
+          # luma and real variance. A black/blank frame is mean~0 and std~0.
+          ok = statistics.mean(means) > 0.05 and statistics.mean(stds) > 0.05
+          print("VERDICT:", "3D RENDERS" if ok else "BLANK — 3D does not render on this runner")
+          if not ok:
+              sys.exit(1)
+          PY
+
+      - name: Upload probe output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gl-probe
+          path: ${{ github.workspace }}/../remotion-studio/out/probe/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
