@@ -27,7 +27,7 @@ const Inner: React.FC = () => {
   React.useEffect(() => {
     const cv = document.createElement("canvas");
     cv.width = 600; cv.height = 1000;
-    bodyFront(new Pen(cv.getContext("2d")!), KID, { mode: "stand", wave: 0.6, seed: 3, expr: "happy" });
+    bodyFront(new Pen(cv.getContext("2d")!), KID, { mode: "stand", wave: 0.6, seed: 3, expr: "smile" });
     const tex = new THREE.CanvasTexture(cv);
     tex.colorSpace = THREE.SRGBColorSpace;
     scene.background = new THREE.Color("#0b1330");
