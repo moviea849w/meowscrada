@@ -28,9 +28,30 @@ a timeline and pay it off — 60 seconds can't do that. Long-form also fits the
 
 | Track | Language |
 |---|---|
-| **Narration (audio)** | **Hindi**, no English technical words. Numbers spoken in English. |
+| **Narration (audio)** | **Hindi grammar, English technical words.** Numbers in English. |
 | **On-screen titles** | **English only** (no Devanagari in rendered text — font support). |
 | **Subtitles** | **Hinglish** — Hindi in Latin script. |
+
+This is how an Indian explainer actually talks. The Hindi carries the grammar, the
+jokes and the feeling; the English carries the nouns that don't have a natural Hindi
+word — *equator*, *rotation*, *gravity*, *orbit*, *momentum*, *atmosphere*. Forcing
+pure-Hindi science vocabulary ("गुरुत्वाकर्षण", "भूमध्य रेखा") sounds like a
+textbook read aloud. It also killed the humour in episode 004 — the narration
+sounded like a school lesson because every word was a translation.
+
+**Piper's Hindi voice handles code-switched text.** It reads Latin-script words with
+an Indian accent, which is exactly what we want — no need to transliterate them into
+Devanagari. What it *cannot* do is read a whole sentence in Latin script; the
+Hindi grammar must stay in Devanagari.
+
+| ✅ | ❌ |
+|---|---|
+| धरती का **rotation** रुक गया। | धरती का घूर्णन रुक गया। |
+| **Equator** पर रफ़्तार **1,670 km/h** है। | भूमध्य रेखा पर रफ़्तार सत्रह सौ… |
+| **Gravity** ज़्यादा ताक़तवर है। | गुरुत्वाकर्षण ज़्यादा ताक़तवर है। |
+
+Numbers are written as **digits** in `say` now — Piper reads `1,670` correctly, and
+spelling them out ("सत्रह सौ") was making lines longer and flatter.
 
 Hinglish subtitles exist because Indian viewers read them faster than Devanagari and
 it works for viewers who don't read Hindi script at all. Example:
